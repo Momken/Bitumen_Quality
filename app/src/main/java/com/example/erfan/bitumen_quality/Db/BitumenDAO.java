@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 
+
 public class BitumenDAO {
 
     private static final String LOG_TAG = BitumenDAO.class.getSimpleName();
