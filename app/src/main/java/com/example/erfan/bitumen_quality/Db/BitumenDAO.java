@@ -46,9 +46,9 @@ public class BitumenDAO {
 
     public Bitumen createBitumen(String name, int note) {
         ContentValues values = new ContentValues();
+
         values.put(BitumenDBHelper.COLUMN_Name, name);
         values.put(BitumenDBHelper.COLUMN_Note, note);
-
         long insertId = database.insert(BitumenDBHelper.TABLE_Bitumen_LIST, null, values);
 
         Cursor cursor = database.query(BitumenDBHelper.TABLE_Bitumen_LIST,

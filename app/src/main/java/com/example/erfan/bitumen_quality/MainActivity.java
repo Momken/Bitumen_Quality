@@ -21,13 +21,13 @@ public class MainActivity extends AppCompatActivity{
     public static final String LOG_TAG = MainActivity.class.getSimpleName();
 
     private BitumenDAO dataSource;
+    UsbCommunicationManager usb = null;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main_measure);
-
 
         Bitumen testBitumen = new Bitumen(1,"70/100","schlecht");
         Log.d(LOG_TAG, "Inhalt der Testmemo: " + testBitumen.toString());
@@ -39,9 +39,32 @@ public class MainActivity extends AppCompatActivity{
 
         Log.d(LOG_TAG, "Die Datenquelle wird geschlossen.");
         dataSource.close();
+        Log.d(LOG_TAG, "onCreate: Create USB");
+
+        usb = new UsbCommunicationManager(this);
+        usb.connect();
+
 
         setupSettings_Bitumen();
+
     }
+
+    private void setupSettings_USB() {
+        Log.d(LOG_TAG, "setupSettings_USB: Is getting startet ");
+
+        StringBuilder data = new StringBuilder();
+
+        usb.read(data);
+
+
+           //  Toast.makeText(this, "setupSettings_USB: Data", Toast.LENGTH_SHORT).show();
+
+      //  Toast.makeText(this, data.toString(), Toast.LENGTH_SHORT).show();
+        Log.d(LOG_TAG, "setupSettings_USB_return to main activity: "+ data.toString());
+    }
+
+
+
 
     private void setupSettings_Bitumen() {
         Button BitumenSettings = (Button) findViewById(R.id.action_Bitumen);
@@ -66,12 +89,14 @@ public class MainActivity extends AppCompatActivity{
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
+            setupSettings_USB();
             return true;
         }
         else if(id == R.id.action_Bitumen){
             Toast.makeText(this, "You have selected Bitumen Menu", Toast.LENGTH_SHORT).show();
             Intent intent = new Intent(getApplicationContext(), measure.class);
             startActivity(intent);
+
             return true;
         }
 
