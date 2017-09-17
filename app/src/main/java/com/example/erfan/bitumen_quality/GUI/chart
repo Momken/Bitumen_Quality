@@ -1,0 +1,44 @@
+<html>
+<style>
+    body > div {
+   position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%,-50%);
+            }
+ </style>
+
+<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+<div id="gauge_div" style="width:600px; height: 600px;"></div>
+
+<script>
+    google.charts.load('current', {'packages':['gauge']});
+    google.charts.setOnLoadCallback(drawGauge);
+
+
+var gaugeOptions = {min: 0, max: 100, yellowFrom: 37.5, yellowTo: 74,
+redFrom: 0, redTo: 37.5, greenFrom: 74, greenTo:100,  minorTicks: 5};
+var gauge;
+
+      function drawGauge() {
+      gaugeData = new google.visualization.DataTable();
+      gaugeData.addColumn('number', 'Quality');
+      gaugeData.addRows(1);
+      gaugeData.setCell(0, 0, 0);
+
+      gauge = new google.visualization.Gauge(document.getElementById('gauge_div'));
+      gauge.draw(gaugeData, gaugeOptions);
+    }
+
+    function changeTemp(dir) {
+      gaugeData.setValue(0, 0, gaugeData.getValue(0, 0) + dir * 25);
+      gaugeData.setValue(0, 1, gaugeData.getValue(0, 1) + dir * 20);
+      gauge.draw(gaugeData, gaugeOptions);
+    }
+
+</script>
+
+
+</html>
+
+

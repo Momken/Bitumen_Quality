@@ -13,4 +13,14 @@
     <string name="title_activity_bitumen_datenban">BitumenDatenbanActivity</string>
     <string name="section_format">Hello World from section: %1$d</string>
 
+    <string-array name="Bitumensorten">
+    <item>70/100</item>
+    <item>Nytop</item>
+    <item>60/100</item>
+    </string-array>
+
+    <string-array name="Lieferant">
+        <item>ÖMV</item>
+        <item>Russische Mafia</item>
+    </string-array>
 </resources>
