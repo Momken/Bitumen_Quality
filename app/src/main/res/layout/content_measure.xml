@@ -32,11 +32,11 @@
         android:layout_marginLeft="8dp"
         android:layout_marginRight="8dp"
         android:layout_marginStart="8dp"
-        app:layout_constraintHorizontal_bias="0.007"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        android:layout_marginTop="70dp" />
+        android:layout_marginTop="8dp" />
 
     <RatingBar
         android:id="@+id/ratingBarBitumen"
@@ -58,7 +58,7 @@
         android:layout_height="wrap_content"
         android:layout_marginLeft="0dp"
         android:layout_marginTop="8dp"
-        android:text="Rate it as you feel "
+        android:text="Please rate as you see fit"
         app:layout_constraintLeft_toRightOf="@+id/ratingBarBitumen"
         app:layout_constraintTop_toBottomOf="@+id/webview"
         tools:layout_editor_absoluteY="633dp" />

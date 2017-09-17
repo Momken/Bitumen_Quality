@@ -90,8 +90,6 @@ public class measure extends AppCompatActivity {
         spec.setIndicator("Bitumen provider");
         host.addTab(spec);
 
-
-
     }
 
 }

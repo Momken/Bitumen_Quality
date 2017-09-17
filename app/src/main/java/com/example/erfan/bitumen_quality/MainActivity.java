@@ -29,7 +29,7 @@ public class MainActivity extends AppCompatActivity{
     private WebView webView;
     RatingBar rateBitumen;
     TextView bitumenRateText;
-
+    Float userRating;
 
 
 
@@ -55,8 +55,37 @@ public class MainActivity extends AppCompatActivity{
 
         makeTheWebView();
 
-        rateBitumen = (RatingBar) findViewById(R.id.ratingBarBitumen);
         bitumenRateText = (TextView) findViewById(R.id.textRatingbarB);
+
+        rateBitumen = (RatingBar) findViewById(R.id.ratingBarBitumen);
+        rateBitumen.setRating(1);
+        rateBitumen.setOnRatingBarChangeListener(new RatingBar.OnRatingBarChangeListener() {
+            @Override
+            public void onRatingChanged(RatingBar ratingBar, float rating, boolean fromUser) {
+               userRating = rateBitumen.getRating();
+
+                if(userRating == 0){
+                    ratingBar.setRating(1);
+                }
+                if(userRating == 1){
+                    bitumenRateText.setText("Sehr schlecht (1 Stern)");
+                }
+                if(userRating == 2){
+                    bitumenRateText.setText("Schlecht (2 Stern)");
+                }
+
+                if(userRating == 3){
+                    bitumenRateText.setText("Genügend (3 Stern)");
+                }
+                if(userRating == 4){
+                    bitumenRateText.setText("Gut (4 Stern)");
+                }
+                if(userRating == 5){
+                    bitumenRateText.setText("Sehr Gut (5 Stern)");
+                }
+
+            }
+        });
 
 
 
@@ -111,7 +140,7 @@ public class MainActivity extends AppCompatActivity{
         }
         else if(id == R.id.action_Bitumen){
             Toast.makeText(this, "You have selected Bitumen Menu", Toast.LENGTH_SHORT).show();
-            Intent intent = new Intent(getApplicationContext(), measure.class);
+            Intent intent = new Intent(getApplicationContext(), BitumenDatenbankActivity.class);
             startActivity(intent);
 
             return true;
@@ -144,7 +173,7 @@ public class MainActivity extends AppCompatActivity{
                 " </style>\n" +
                 "\n" +
                 "<script type=\"text/javascript\" src=\"https://www.gstatic.com/charts/loader.js\"></script>\n" +
-                "<div id=\"gauge_div\" style=\"width:600px; height: 600px;\"></div>\n" +
+                "<div id=\"gauge_div\" style=\"width:550px; height: 550px;\"></div>\n" +
                 "\n" +
                 "<script>\n" +
                 "    google.charts.load('current', {'packages':['gauge']});\n" +
