@@ -6,6 +6,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
@@ -22,6 +23,8 @@ public class MainActivity extends AppCompatActivity{
 
     private BitumenDAO dataSource;
     UsbCommunicationManager usb = null;
+
+
 
 
     @Override
@@ -43,6 +46,7 @@ public class MainActivity extends AppCompatActivity{
 
         usb = new UsbCommunicationManager(this);
         usb.connect();
+
 
 
         setupSettings_Bitumen();

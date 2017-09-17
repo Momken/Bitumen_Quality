@@ -275,6 +275,7 @@ public class UsbCommunicationManager  implements Runnable{
 
                        // toast.show();
                         Log.d("MainActivity", resiveddata.toString() );
+
                         resiveddata.delete(0, resiveddata.length()-1);
 
                         break;
