@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.example.erfan.bitumen_quality.measure">
+    tools:context="com.example.erfan.bitumen_quality.BitumenDatenbankActivity">
 
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/fab"
