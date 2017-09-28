@@ -12,6 +12,10 @@ import android.widget.Button;
 import android.widget.RatingBar;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.TabHost;
+import android.widget.TabHost.TabContentFactory;
+import android.widget.TabHost.TabSpec;
+import android.widget.TabWidget;
 
 import com.example.erfan.bitumen_quality.Db.Bitumen;
 import com.example.erfan.bitumen_quality.Db.BitumenDAO;
@@ -36,7 +40,15 @@ public class MainActivity extends AppCompatActivity{
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main_measure);
+        /*********GUI 1
+         * main_measure
+         */
+
+        /*********GUI 2
+         * content_measure_lab
+         */
+
+         setContentView(R.layout.content_measure_lab);
 
         Bitumen testBitumen = new Bitumen(1,"70/100","schlecht");
         Log.d(LOG_TAG, "Inhalt der Testmemo: " + testBitumen.toString());
@@ -53,8 +65,28 @@ public class MainActivity extends AppCompatActivity{
         usb = new UsbCommunicationManager(this);
         usb.connect();
 
-        makeTheWebView();
+       /*********GUI 1
+        *
 
+        makeTheWebView();
+        makeBitumenrate();
+        */
+
+        /*********GUI 2
+         *
+         */
+        makeTheTabs();
+
+
+
+
+
+
+         setupSettings_Bitumen();
+
+    }
+
+    private void makeBitumenrate() {
         bitumenRateText = (TextView) findViewById(R.id.textRatingbarB);
 
         rateBitumen = (RatingBar) findViewById(R.id.ratingBarBitumen);
@@ -62,7 +94,7 @@ public class MainActivity extends AppCompatActivity{
         rateBitumen.setOnRatingBarChangeListener(new RatingBar.OnRatingBarChangeListener() {
             @Override
             public void onRatingChanged(RatingBar ratingBar, float rating, boolean fromUser) {
-               userRating = rateBitumen.getRating();
+                userRating = rateBitumen.getRating();
 
                 if(userRating == 0){
                     ratingBar.setRating(1);
@@ -86,13 +118,6 @@ public class MainActivity extends AppCompatActivity{
 
             }
         });
-
-
-
-
-
-        setupSettings_Bitumen();
-
     }
 
     private void setupSettings_USB() {
@@ -204,6 +229,35 @@ public class MainActivity extends AppCompatActivity{
                 "\n" +
                 "\n" +
                 "</html>\n";
+    }
+
+    private void makeTheTabs(){
+        TabHost host = (TabHost)findViewById(R.id.tabHost);
+        host.setup();
+        //Tab 1
+        TabHost.TabSpec spec = host.newTabSpec("Tab One");
+        spec.setContent(R.id.tab1);
+        spec.setIndicator("Bitumen Scan");
+        host.addTab(spec);
+
+        //Tab 2
+        spec = host.newTabSpec("Tab Two");
+        spec.setContent(R.id.tab2);
+        spec.setIndicator("Bitumen Daten anlegen");
+        host.addTab(spec);
+
+        //Tab 3
+        spec = host.newTabSpec("Tab Three");
+        spec.setContent(R.id.tab3);
+        spec.setIndicator("Tranche");
+        host.addTab(spec);
+
+        //Tab 4
+        spec = host.newTabSpec("Tab Four");
+        spec.setContent(R.id.tab4);
+        spec.setIndicator("Bitumen Daten anzeigen");
+        host.addTab(spec);
+
     }
 
 

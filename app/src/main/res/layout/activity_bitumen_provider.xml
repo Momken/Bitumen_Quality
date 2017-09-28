@@ -1,23 +1,36 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:weightSum="1">
 
-    <Button
-        android:id="@+id/button2"
+    <Spinner
+        android:id="@+id/spinner"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Speichere daten in die datenbank" />
+        android:layout_weight="0.02"
+        android:entries="@array/Tranche" />
 
-    <TextView
-        android:id="@+id/textView2"
+    <AutoCompleteTextView
+        android:id="@+id/autoCompleteTextView3"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="welche infos sin hier notwendig ??" />
+        android:layout_weight="0.02"
+        android:text="Interne Bezeichnung" />
 
-    <TextView
-        android:id="@+id/textView"
+    <AutoCompleteTextView
+        android:id="@+id/autoCompleteTextView2"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="TextView" />
+        android:layout_weight="0.02"
+        android:text="Alterungsmethode" />
+
+    <MultiAutoCompleteTextView
+        android:id="@+id/multiAutoCompleteTextView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="0.22"
+        android:text="Beschreibung" />
+
 </LinearLayout>
