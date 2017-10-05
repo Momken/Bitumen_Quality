@@ -54,14 +54,14 @@ public class UsbCommunicationManager  implements Runnable{
         context.registerReceiver(usbReceiver, filter);
     }
 
-    public void connect()
+    public String connect()
     {
         Log.d("MainActivity", "Connect: Start");
         // check if there's a connected usb device
         if(usbManager.getDeviceList().isEmpty())
         {
             Log.d("MainActivity", "No connected devices");
-            return;
+            return "No connected devices";
         }
 
         // get the first (only) connected device
@@ -74,6 +74,7 @@ public class UsbCommunicationManager  implements Runnable{
         usbManager.requestPermission(usbDevice, permissionIntent);
 
         Log.d("MainActivity", "Connect: Ende");
+        return "Scanning..";
     }
 
     public void stop()

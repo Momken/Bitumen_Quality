@@ -38,7 +38,6 @@
                     android:id="@+id/editText_BitumenSorte"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:hint="@string/editText_Bitumen_Sort"
                     android:inputType="text"
                     android:text="Sorte" />
 

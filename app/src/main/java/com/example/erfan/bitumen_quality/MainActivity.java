@@ -63,7 +63,7 @@ public class MainActivity extends AppCompatActivity{
         Log.d(LOG_TAG, "onCreate: Create USB");
 
         usb = new UsbCommunicationManager(this);
-        usb.connect();
+        String usbStatus = usb.connect();
 
        /*********GUI 1
         *
@@ -126,6 +126,8 @@ public class MainActivity extends AppCompatActivity{
         StringBuilder data = new StringBuilder();
 
         usb.read(data);
+
+
 
 
            //  Toast.makeText(this, "setupSettings_USB: Data", Toast.LENGTH_SHORT).show();
@@ -243,7 +245,7 @@ public class MainActivity extends AppCompatActivity{
         //Tab 2
         spec = host.newTabSpec("Tab Two");
         spec.setContent(R.id.tab2);
-        spec.setIndicator("Bitumen Daten anlegen");
+        spec.setIndicator("Bitumen Data");
         host.addTab(spec);
 
         //Tab 3
