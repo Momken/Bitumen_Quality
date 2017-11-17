@@ -1,4 +1,4 @@
-package com.example.erfan.bitumen_quality.Db;
+package com.example.erfan.bitumen_quality.DB;
 
 /**
  * Created by Erfan on 17.07.2017.

@@ -136,7 +136,7 @@ public class UsbCommunicationManager  implements Runnable{
             readThread = new Thread(this);
             readThread.start();
             state = "starting usb listening thread";
-          //  Toast.makeText(context, "starting usb listening thread", Toast.LENGTH_LONG).show();
+            Toast.makeText(context, "starting usb listening thread", Toast.LENGTH_LONG).show();
         }
 
         Log.d("MainActivity", "read: "+ state);
@@ -266,12 +266,12 @@ public class UsbCommunicationManager  implements Runnable{
 
                 for(int i = 0; i < buffer.capacity() && buffer.get(i) != 0 ; i++)
                 {
-                  //  Log.d("MainActivity", " run.request: " + "/" + (char)buffer.get(i) +"/" + " resiveddata: " + resiveddata.length() + " capacity:" + buffer.capacity());
+                  //  Log.d("MainActivity", " run.request: " + "/" + (char)buffer.get(i) +"/" + " receiveddata: " + receiveddata.length() + " capacity:" + buffer.capacity());
                     resiveddata.append( (char) buffer.get(i));
 
                     if((char) buffer.get(i) == '\n')
                     {
-                       // Toast toast = Toast.makeText(context, resiveddata.toString(), Toast.LENGTH_LONG);
+                       // Toast toast = Toast.makeText(context, receiveddata.toString(), Toast.LENGTH_LONG);
                         //Log.d("MainActivity", "Hallo rabbit... " );
 
                        // toast.show();
@@ -294,11 +294,11 @@ public class UsbCommunicationManager  implements Runnable{
                     intent.putExtra("data", data);
                     context.sendBroadcast(intent);
                     Log.d("MainActivity", " run.request: " + data.toString());
-                    resiveddata.append(data.toString());
+                    receiveddata.append(data.toString());
 
                     // reset packet
                     packetState = 0;
-                    resiveddata.delete(0,resiveddata.length());*/
+                    receiveddata.delete(0,receiveddata.length());*/
                 }
             }
             else

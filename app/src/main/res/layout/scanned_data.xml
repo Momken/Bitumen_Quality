@@ -49,6 +49,12 @@
                     android:inputType="text"
                     android:text="Name" />
 
+                <Button
+                    android:id="@+id/BItumenScannDelete"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Delete" />
+
                 <ListView
                     android:id="@+id/listview_Bitumen_memos"
                     android:layout_width="wrap_content"

@@ -1,4 +1,4 @@
-package com.example.erfan.bitumen_quality.Db;
+package com.example.erfan.bitumen_quality.DAO;
 
 /**
  * Created by Erfan on 20.07.2017.
@@ -9,6 +9,10 @@ import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 import android.content.ContentValues;
 import android.database.Cursor;
+
+import com.example.erfan.bitumen_quality.DB.Bitumen;
+import com.example.erfan.bitumen_quality.DB.BitumenDBHelper;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -51,6 +55,8 @@ public class BitumenDAO {
         values.put(BitumenDBHelper.COLUMN_Note, note);
         long insertId = database.insert(BitumenDBHelper.TABLE_Bitumen_LIST, null, values);
 
+
+        Log.d(LOG_TAG,"insertID="+insertId);
         Cursor cursor = database.query(BitumenDBHelper.TABLE_Bitumen_LIST,
                 columns, BitumenDBHelper.COLUMN_ID + "=" + insertId,
                 null, null, null, null);
