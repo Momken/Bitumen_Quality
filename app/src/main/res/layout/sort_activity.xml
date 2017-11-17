@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:weightSum="1"
+    android:id="@+id/sorteLinearLayout">
+
+    <AutoCompleteTextView
+        android:id="@+id/sorteAlgemeineBezeichnung"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="0.02"
+        android:text="externe Bezeichnung" />
+
+    <AutoCompleteTextView
+        android:id="@+id/sorteInterneBezeichnung"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="0.02"
+        android:text="Interne Bezeichnung" />
+
+    <MultiAutoCompleteTextView
+        android:id="@+id/sorteBeschreibung"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="0.22"
+        android:text="Beschreibung" />
+
+    <Button
+        android:id="@+id/SorteSave"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="0.02"
+        android:text="Save" />
+
+    <Button
+        android:id="@+id/SorteDelete"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="0.02"
+        android:text="Delete" />
+
+    <ListView
+        android:id="@+id/listview_Sorte"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="0.02" />
+
+</LinearLayout>
