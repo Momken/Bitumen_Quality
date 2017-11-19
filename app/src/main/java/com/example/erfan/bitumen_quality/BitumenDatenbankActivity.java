@@ -1,5 +1,6 @@
 package com.example.erfan.bitumen_quality;
 
+import android.content.ContentValues;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
@@ -10,6 +11,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -17,8 +19,26 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
+import android.view.inputmethod.InputMethodManager;
+import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.LinearLayout;
+import android.widget.ListView;
+import android.widget.Spinner;
 import android.widget.TabHost;
 import android.widget.TextView;
+
+import com.example.erfan.bitumen_quality.DAO.HerstellerDAO;
+import com.example.erfan.bitumen_quality.DAO.LieferungDAO;
+import com.example.erfan.bitumen_quality.DAO.ProbeDAO;
+import com.example.erfan.bitumen_quality.DAO.SorteDAO;
+import com.example.erfan.bitumen_quality.DB.Hersteller;
+import com.example.erfan.bitumen_quality.DB.Lieferung;
+import com.example.erfan.bitumen_quality.DB.Sorte;
+
+import java.sql.Date;
+import java.util.List;
 
 public class BitumenDatenbankActivity extends AppCompatActivity {
 
@@ -31,16 +51,21 @@ public class BitumenDatenbankActivity extends AppCompatActivity {
      * {@link android.support.v4.app.FragmentStatePagerAdapter}.
      */
     private SectionsPagerAdapter mSectionsPagerAdapter;
+    private static TabHost host;
+
 
     /**
      * The {@link ViewPager} that will host the section contents.
      */
     private ViewPager mViewPager;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_bitumen_datenbank);
+        Log.d("MainActivity", "activity_bitumen_datenbank loded");
+
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -64,8 +89,10 @@ public class BitumenDatenbankActivity extends AppCompatActivity {
 
 
 
-
     }
+
+
+
 
 
     @Override
@@ -99,6 +126,11 @@ public class BitumenDatenbankActivity extends AppCompatActivity {
          * fragment.
          */
         private static final String ARG_SECTION_NUMBER = "section_number";
+        private SorteDAO dataSource6;
+        private HerstellerDAO dataHersteller;
+        private LieferungDAO dataLieferung;
+
+
 
         public PlaceholderFragment() {
         }
@@ -118,24 +150,51 @@ public class BitumenDatenbankActivity extends AppCompatActivity {
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
                                  Bundle savedInstanceState) {
-            View rootView = inflater.inflate(R.layout.content_measure_lab, container, false);
+            View rootView = inflater.inflate(R.layout.resived_sample_tabhost, container, false);
             TextView textView = (TextView) rootView.findViewById(R.id.section_label);
             textView.setText(getString(R.string.section_format, getArguments().getInt(ARG_SECTION_NUMBER)));
 
-            TabHost host = (TabHost) rootView.findViewById(R.id.tabHost);
+            host = (TabHost) rootView.findViewById(R.id.tabHostResivedSample);
             host.setup();
 
+            Log.d("MainActivity", "set tabs");
+
+
             //Tab 1
-            TabHost.TabSpec spec = host.newTabSpec("Tab One");
-            spec.setContent(R.id.tab1);
-            spec.setIndicator("Bitumen Daten");
+            TabHost.TabSpec spec = host.newTabSpec("Delivery");
+            spec.setContent(R.id.Delivery);
+            spec.setIndicator("Delivery");
             host.addTab(spec);
 
             //Tab 2
-            spec = host.newTabSpec("Tab Two");
-            spec.setContent(R.id.tab2);
-            spec.setIndicator("Bitumen provider");
+            spec = host.newTabSpec("Sort");
+            spec.setContent(R.id.Sort);
+            spec.setIndicator("Sort");
             host.addTab(spec);
+
+            //Tab 3
+            spec = host.newTabSpec("Provider");
+            spec.setContent(R.id.Provider);
+            spec.setIndicator("Provider");
+            host.addTab(spec);
+
+            dataSource6 = new SorteDAO(getContext());
+            dataSource6.open();
+            showAllListEntriesSorte(rootView);
+            dataSource6.close();
+
+
+            dataHersteller = new HerstellerDAO(getContext());
+            dataHersteller.open();
+            showAllListEntriesHersteller(rootView);
+            dataHersteller.close();
+
+
+            dataLieferung = new LieferungDAO(getContext());
+            dataLieferung.open();
+            showAllListEntriesLieferung(rootView);
+            dataLieferung.close();
+
 
             super.onCreate(savedInstanceState);
             Log.d("MainActivity", "activity_bitumen2: Measure");
@@ -143,11 +202,120 @@ public class BitumenDatenbankActivity extends AppCompatActivity {
             return rootView;
         }
 
+        private void showAllListEntriesSorte (View rootview) {
+            List<Sorte> memoList = dataSource6.getAllSorte();
 
-    }
+            ArrayAdapter<Sorte> shoppingMemoArrayAdapter = new ArrayAdapter<> (
+                    rootview.getContext(),
+                    android.R.layout.simple_list_item_multiple_choice,
+                    memoList);
+
+            //LinearLayout layout = (LinearLayout) findViewById(R.id.sorteLinearLayout);
+            ListView memosListView = (ListView) rootview.findViewById(R.id.listview_Sorte);
+            memosListView.setAdapter(shoppingMemoArrayAdapter);
+
+        }
+
+        private void showAllListEntriesHersteller (View rootview) {
+            List<Hersteller> memoList = dataHersteller.getAllHersteller();
+
+            ArrayAdapter<Hersteller> shoppingMemoArrayAdapter = new ArrayAdapter<> (
+                    rootview.getContext(),
+                    android.R.layout.simple_list_item_multiple_choice,
+                    memoList);
+
+            //LinearLayout layout = (LinearLayout) findViewById(R.id.sorteLinearLayout);
+            ListView memosListView = (ListView) rootview.findViewById(R.id.listview_Provider);
+            memosListView.setAdapter(shoppingMemoArrayAdapter);
+
+        }
 
 
-    /**
+        private void showAllListEntriesLieferung (View rootview) {
+            List<Lieferung> memoList = dataLieferung.getAllLieferung();
+
+            ArrayAdapter<Lieferung> shoppingMemoArrayAdapter = new ArrayAdapter<> (
+                    rootview.getContext(),
+                    android.R.layout.simple_list_item_multiple_choice,
+                    memoList);
+
+            //LinearLayout layout = (LinearLayout) findViewById(R.id.sorteLinearLayout);
+            ListView memosListView = (ListView) rootview.findViewById(R.id.listview_FaktorySampel);
+            memosListView.setAdapter(shoppingMemoArrayAdapter);
+
+        }
+
+        private void activateAddButton(View rootview) {
+
+            /*
+                Delivery Save
+             */
+
+            Button buttonAddDelivery = (Button) rootview.findViewById(R.id.deliverdFaktorySave);
+            final EditText editTextInfo = (EditText) rootview.findViewById(R.id.BescheibungLieferung);
+            final EditText editTextName = (EditText) rootview.findViewById(R.id.BezeichnungLieferung);
+            final EditText editTextDate = (EditText) rootview.findViewById(R.id.DateLieferung);
+            final Spinner editTextLSorte = (Spinner) rootview.findViewById(R.id.lieferungSorteSpinner);
+            final Spinner editTextLHersteller = (Spinner) rootview.findViewById(R.id.lieferungFirmaSpinner);
+
+
+/*
+            //todo save butten Programmieren
+            buttonAddDelivery.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+
+                    String info = editTextInfo.getText().toString();
+                    String name = editTextName.getText().toString();
+                    String date = editTextDate.getText().toString();
+                    String lieferungSorte = editTextLSorte.getSelectedItem().toString();
+
+                    if(TextUtils.isEmpty(info)) {
+                        editTextInfo.setError(getString(R.string.output_errorMessage));
+                        return;
+                    }
+                    if(TextUtils.isEmpty(name)) {
+                        editTextName.setError(getString(R.string.output_errorMessage));
+                        return;
+                    }
+                    if(TextUtils.isEmpty(date)) {
+                        editTextDate.setError(getString(R.string.output_errorMessage));
+                        return;
+                    }
+                    if(TextUtils.isEmpty(lieferungSorte)) {
+                        //todo error
+                        return;
+                    }
+
+                    long herstllerId, Date date, String bezeichnung, String beschreibung) {
+                        ContentValues values = new ContentValues()
+
+                    dataLieferung.createLieferung(
+                            dataHersteller.getAllHersteller(editTextLHersteller).get(0).getId() , Date.valueOf(date) ,name, info);
+
+
+                    InputMethodManager inputMethodManager;
+                    inputMethodManager = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
+                    if(getCurrentFocus() != null) {
+                        inputMethodManager.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
+                    }
+
+                    showAllListEntriesSampel();
+                }
+            });*/
+
+        }
+
+
+        }
+
+
+
+
+
+
+
+        /**
      * A {@link FragmentPagerAdapter} that returns a fragment corresponding to
      * one of the sections/tabs/pages.
      */

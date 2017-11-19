@@ -44,6 +44,7 @@ import com.example.erfan.bitumen_quality.DAO.BitumenDAO;
 import com.example.erfan.bitumen_quality.DB.Probe;
 
 import java.sql.Date;
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -137,13 +138,14 @@ public class MainActivity extends AppCompatActivity  implements Runnable{
         Log.d(LOG_TAG,"*********************************************");
         */
 
-        //ToDo: sauber alle 3 butten richten
-        activateAddButton();
-        showAllListEntriesSampel();
-        showAllListEntriesAlterung();
+
 
         Log.d(LOG_TAG, "Die Datenquelle wird geschlossen.");
         dataSource.close();
+
+
+
+
 
 
 
@@ -169,6 +171,24 @@ public class MainActivity extends AppCompatActivity  implements Runnable{
 
 
         setupSettings_Bitumen();
+
+
+
+
+        Spinner My_spinner = (Spinner) findViewById(R.id.scannSpinnerProbe);
+        ArrayAdapter<String> my_Adapter = new ArrayAdapter<String>
+                (this, android.R.layout.simple_spinner_item, getTableValuesProbe());
+
+
+
+        My_spinner.setAdapter(my_Adapter);
+
+
+
+        //ToDo: sauber alle 3 butten richten
+        activateAddButton();
+        showAllListEntriesSampel();
+        showAllListEntriesAlterung();
 
     }
 
@@ -326,6 +346,27 @@ public class MainActivity extends AppCompatActivity  implements Runnable{
 
     }
 
+
+    public ArrayList<String> getTableValuesProbe() {
+        ArrayList<String> my_array = new ArrayList<String>();
+        try {
+            dataProbe.open();
+
+            List<Probe> list =  dataProbe.getAllProbe();
+
+
+
+            for(int i = 0; i<list.size() ;i++){
+                    String NAME = list.get(i).getBezeichnung();
+                    my_array.add(list.get(i).getId() +": "+ NAME);
+                }
+            } catch (Exception e) {
+            Toast.makeText(getApplicationContext(), "Error encountered.",
+                    Toast.LENGTH_LONG);
+        }
+        dataProbe.close();
+        return my_array;
+    }
 
 
 

@@ -106,6 +106,7 @@ public class ProbeDAO {
             temp = cursorToProbe(cursor);
             list.add(temp);
             Log.d(LOG_TAG, "ID: " + temp.getId() + ", Inhalt: " + temp.toString());
+
             cursor.moveToNext();
         }
 

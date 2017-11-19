@@ -56,7 +56,7 @@ public class UsbReadService extends Service
         IntentFilter filter = new IntentFilter(ACTION_USB_PERMISSION);
         context.registerReceiver(usbReceiver, filter);
 
-        // To avoid cpu-blocking, we create a background handler to run our service
+        // To avoid cpu-blocking, we createBitumen a background handler to run our service
         HandlerThread thread = new HandlerThread("TutorialService",
                 Process.THREAD_PRIORITY_BACKGROUND);
         // start the new handler thread

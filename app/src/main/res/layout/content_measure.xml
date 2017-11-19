@@ -17,10 +17,10 @@
         android:layout_marginTop="0dp"
         android:text="Scann Bitumen"
         app:layout_constraintLeft_toRightOf="@+id/button5"
-        app:layout_constraintTop_toBottomOf="@+id/spinner2" />
+        app:layout_constraintTop_toBottomOf="@+id/scannSpinnerProbe2" />
 
     <Spinner
-        android:id="@+id/spinner2"
+        android:id="@+id/scannSpinnerProbe2"
         android:layout_width="0dp"
         android:layout_height="40dp"
         android:layout_marginEnd="8dp"
@@ -72,7 +72,7 @@
         app:layout_constraintHorizontal_bias="0.45"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/spinner2" />
+        app:layout_constraintTop_toBottomOf="@+id/scannSpinnerProbe2" />
 
     <WebView
         android:id="@+id/webview"

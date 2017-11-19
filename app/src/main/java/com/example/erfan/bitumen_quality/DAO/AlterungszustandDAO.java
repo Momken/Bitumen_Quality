@@ -110,7 +110,6 @@ public class AlterungszustandDAO {
         while(!cursor.isAfterLast()) {
             alterung = cursorToAlterungszustand(cursor);
             list.add(alterung);
-            Log.d(LOG_TAG, "ID: " + alterung.getId() + ", Inhalt: " + alterung.toString());
             cursor.moveToNext();
         }
 

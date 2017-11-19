@@ -10,7 +10,8 @@
         android:id="@+id/spinner_SampleDeliverd"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_weight="0.02" />
+        android:layout_weight="0.02"
+        android:visibility="visible" />
 
     <EditText
         android:id="@+id/Sample_Date"
