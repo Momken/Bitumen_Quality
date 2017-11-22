@@ -176,7 +176,7 @@ public class MainActivity extends AppCompatActivity  implements Runnable{
 
 
 
-        Spinner My_spinner = (Spinner) findViewById(R.id.scannSpinnerProbe);
+        Spinner My_spinner = (Spinner) findViewById(R.id.Scann_SpinnerProbe);
         ArrayAdapter<String> my_Adapter = new ArrayAdapter<String>
                 (this, android.R.layout.simple_spinner_item, getTableValuesProbe());
 
@@ -296,23 +296,83 @@ public class MainActivity extends AppCompatActivity  implements Runnable{
     private void activateAddButton() {
         /*
                 Butten Save Sample
+        */
+                Button buttonAddProductSample = (Button) findViewById(R.id.sampleSave);
+                final EditText editTextInfo = (EditText) findViewById(R.id.sampleInfo);
+                final EditText editTextName = (EditText) findViewById(R.id.sampleName);
+                final EditText editTextDate = (EditText) findViewById(R.id.Sample_Date);
+                final Spinner editTextLieferung = (Spinner) findViewById(R.id.spinner_SampleDeliverd);
+
+
+
+                buttonAddProductSample.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+
+                        String info = editTextInfo.getText().toString();
+                        String name = editTextName.getText().toString();
+                        String date = editTextDate.getText().toString();
+                        String lieferung = editTextLieferung.getSelectedItem().toString();
+
+                        if(TextUtils.isEmpty(info)) {
+                            editTextInfo.setError(getString(R.string.output_errorMessage));
+                            return;
+                        }
+                        if(TextUtils.isEmpty(name)) {
+                            editTextName.setError(getString(R.string.output_errorMessage));
+                            return;
+                        }
+                        if(TextUtils.isEmpty(date)) {
+                            editTextDate.setError(getString(R.string.output_errorMessage));
+                            return;
+                        }
+                        if(TextUtils.isEmpty(lieferung)) {
+                            //todo error
+                            return;
+                        }
+
+
+                        dataProbe.open();
+                        dataProbe.createProbe(
+                                dataLieferung.getAllLieferung(lieferung).get(0).getId() , Date.valueOf(date) ,name, info);
+                        dataProbe.close();
+
+                        InputMethodManager inputMethodManager;
+                        inputMethodManager = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
+                        if(getCurrentFocus() != null) {
+                            inputMethodManager.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
+                        }
+
+                showAllListEntriesSampel();
+            }
+        });
+        /*      ENDE
+                Butten Save Sample
+        */
+
+        /*
+
+                Butten Save Scan
          */
-        Button buttonAddProductSample = (Button) findViewById(R.id.sampleSave);
-        final EditText editTextInfo = (EditText) findViewById(R.id.sampleInfo);
-        final EditText editTextName = (EditText) findViewById(R.id.sampleName);
-        final EditText editTextDate = (EditText) findViewById(R.id.Sample_Date);
-        final Spinner editTextLieferung = (Spinner) findViewById(R.id.spinner_SampleDeliverd);
+        Button buttonAddScann = (Button) findViewById(R.id.ScannSave);
+        final EditText editTextScann_Info = (EditText) findViewById(R.id.Scann_Description);
+        final EditText editTextScann_Name = (EditText) findViewById(R.id.Scann_Name);
+        final EditText editTextScann_InternID = (EditText) findViewById(R.id.Scann_intern_number_id);
+        final Spinner editTextSample = (Spinner) findViewById(R.id.Scann_SpinnerProbe);
+        final TextView ed_messungsfaktoren = (TextView) findViewById(R.id.Result);
+        final TextView ed_messung = (TextView) findViewById(R.id.Info);
 
-
-
-        buttonAddProductSample.setOnClickListener(new View.OnClickListener() {
+                buttonAddScann.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
-                String info = editTextInfo.getText().toString();
-                String name = editTextName.getText().toString();
-                String date = editTextDate.getText().toString();
-                String lieferung = editTextLieferung.getSelectedItem().toString();
+                String info = editTextScann_Info.getText().toString();
+                String name = editTextScann_Name.getText().toString();
+                String internID = editTextScann_InternID.getText().toString();
+                String sample ="1";// editTextSample.getSelectedItem().toString();
+
+
+                //todo if empty Textview
 
                 if(TextUtils.isEmpty(info)) {
                     editTextInfo.setError(getString(R.string.output_errorMessage));
@@ -322,17 +382,19 @@ public class MainActivity extends AppCompatActivity  implements Runnable{
                     editTextName.setError(getString(R.string.output_errorMessage));
                     return;
                 }
-                if(TextUtils.isEmpty(date)) {
-                    editTextDate.setError(getString(R.string.output_errorMessage));
-                    return;
-                }
-                if(TextUtils.isEmpty(lieferung)) {
-                    //todo error
+                if(TextUtils.isEmpty(internID)) {
+                    editTextScann_InternID.setError(getString(R.string.output_errorMessage));
                     return;
                 }
 
-                dataProbe.createProbe(
-                        dataLieferung.getAllLieferung(lieferung).get(0).getId() , Date.valueOf(date) ,name, info);
+                Date date = new java.sql.Date(new java.util.Date().getTime()) ;
+                Log.d(LOG_TAG, "Scanndaten:"+  "0 " +date.toString()+" " + internID+" "+name+" "+info+ " "+ed_messungsfaktoren.getText().toString()+ " "+ed_messung.getText().toString()  );
+
+
+                dataAlterungszustand.open();
+                dataAlterungszustand.createAlterungszustand
+                        (0, date, internID+":"+name+":"+info, ed_messungsfaktoren.getText().toString(), ed_messung.getText().toString()  );
+                dataAlterungszustand.close();
 
 
                 InputMethodManager inputMethodManager;
@@ -341,9 +403,15 @@ public class MainActivity extends AppCompatActivity  implements Runnable{
                     inputMethodManager.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
                 }
 
-                showAllListEntriesSampel();
+                showAllListEntriesAlterung();
+                Toast.makeText(context, "Scanned data Saved", Toast.LENGTH_LONG).show();
+
             }
         });
+
+
+
+
 
     }
 
@@ -549,7 +617,7 @@ public class MainActivity extends AppCompatActivity  implements Runnable{
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                TextView info = (TextView) findViewById(R.id.info);
+                TextView info = (TextView) findViewById(R.id.Result);
                 info.setText("Connected");
             }
         });
@@ -776,7 +844,7 @@ public class MainActivity extends AppCompatActivity  implements Runnable{
                                    Log.d("MainActivity", "run:xxx"+ text +"xxx");
                                    //String[] segs = text.split( Pattern.quote( "(\\s|\\p{Punct})+" ) );
                                    String[] segs = text.split( Pattern.quote( ":" ) );
-                                   TextView info = (TextView) findViewById(R.id.info);
+                                   TextView info = (TextView) findViewById(R.id.Info);
                                    if(segs.length == 3) {
                                        info.setText("Values:" + segs[2]);
                                    }else{
@@ -798,7 +866,7 @@ public class MainActivity extends AppCompatActivity  implements Runnable{
                                     String text = receiveddata.toString().replaceAll("\n","");
                                     Log.d("MainActivity", "run:xxx"+ text +"xxx");
                                     String[] segs = text.split( Pattern.quote( "(\\s|\\p{Punct})+" ) );
-                                    TextView result = (TextView)findViewById(R.id.result);
+                                    TextView result = (TextView)findViewById(R.id.Result);
 
                                     result.setText(text);
                                 }

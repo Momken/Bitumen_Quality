@@ -9,21 +9,22 @@
 
 
     <Spinner
-        android:id="@+id/scannSpinnerProbe"
+        android:id="@+id/Scann_SpinnerProbe"
         android:layout_width="0dp"
         android:layout_height="40dp"
         android:layout_marginEnd="8dp"
         android:layout_marginLeft="8dp"
         android:layout_marginRight="8dp"
         android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
+        android:layout_marginTop="16dp"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
 
     <Button
-        android:id="@+id/button5"
+        android:id="@+id/ScannSave"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginLeft="8dp"
@@ -38,10 +39,10 @@
         app:layout_constraintBottom_toBottomOf="parent"
         android:layout_marginBottom="8dp"
         app:layout_constraintVertical_bias="0.796"
-        app:layout_constraintTop_toTopOf="@+id/scannSpinnerProbe" />
+        app:layout_constraintTop_toTopOf="@+id/Scann_SpinnerProbe" />
 
     <EditText
-        android:id="@+id/number_id"
+        android:id="@+id/Scann_intern_number_id"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
@@ -49,10 +50,10 @@
         android:inputType="number"
         android:text="1"
         app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/scannSpinnerProbe" />
+        app:layout_constraintTop_toBottomOf="@+id/Scann_SpinnerProbe" />
 
     <AutoCompleteTextView
-        android:id="@+id/autoCompleteTextView"
+        android:id="@+id/Scann_Name"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginLeft="8dp"
@@ -60,14 +61,14 @@
         android:layout_marginTop="10dp"
         android:text="autofilling - Name "
         app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintLeft_toRightOf="@+id/number_id"
-        app:layout_constraintRight_toLeftOf="@+id/editText2"
-        app:layout_constraintTop_toBottomOf="@+id/scannSpinnerProbe"
+        app:layout_constraintLeft_toRightOf="@+id/Scann_intern_number_id"
+        app:layout_constraintRight_toLeftOf="@+id/Scann_Description"
+        app:layout_constraintTop_toBottomOf="@+id/Scann_SpinnerProbe"
         android:layout_marginStart="8dp"
         android:layout_marginEnd="8dp" />
 
     <EditText
-        android:id="@+id/editText2"
+        android:id="@+id/Scann_Description"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
@@ -75,10 +76,10 @@
         android:inputType="textPersonName"
         android:text="Description"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/scannSpinnerProbe" />
+        app:layout_constraintTop_toBottomOf="@+id/Scann_SpinnerProbe" />
 
     <TextView
-        android:id="@+id/result"
+        android:id="@+id/Info"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginBottom="8dp"
@@ -94,14 +95,15 @@
         android:text="Disconnected"
         android:textAppearance="@style/TextAppearance.AppCompat.Display4"
         android:textSize="56sp"
-        app:layout_constraintBottom_toTopOf="@+id/info"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toTopOf="@+id/Result"
         app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/autoCompleteTextView" />
+        app:layout_constraintTop_toBottomOf="@+id/Scann_Name" />
 
     <TextView
-        android:id="@+id/info"
+        android:id="@+id/Result"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="0dp"
@@ -114,7 +116,7 @@
         android:textAppearance="@style/TextAppearance.AppCompat.Display2"
         android:textColor="@android:color/darker_gray"
         android:textSize="36sp"
-        app:layout_constraintBottom_toTopOf="@+id/button5"
+        app:layout_constraintBottom_toTopOf="@+id/ScannSave"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent" />
 

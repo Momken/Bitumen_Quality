@@ -16,7 +16,7 @@
         android:layout_marginStart="8dp"
         android:layout_marginTop="0dp"
         android:text="Scann Bitumen"
-        app:layout_constraintLeft_toRightOf="@+id/button5"
+        app:layout_constraintLeft_toRightOf="@+id/ScannSave"
         app:layout_constraintTop_toBottomOf="@+id/scannSpinnerProbe2" />
 
     <Spinner
@@ -62,7 +62,7 @@
         tools:layout_editor_absoluteY="633dp" />
 
     <Button
-        android:id="@+id/button5"
+        android:id="@+id/ScannSave"
         android:layout_width="wrap_content"
         android:layout_height="48dp"
         android:layout_marginLeft="8dp"

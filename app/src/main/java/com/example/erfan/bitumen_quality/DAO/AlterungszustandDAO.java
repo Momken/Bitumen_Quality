@@ -51,7 +51,8 @@ public class AlterungszustandDAO {
         Log.d(LOG_TAG, "Datenbank mit Hilfe des DbHelpers geschlossen.");
     }
 
-    public Alterungszustand createAlterungszustand(int idLieferung, Date datum, String bezeichnung, String messungsfaktoren, String messung) {
+    public Alterungszustand createAlterungszustand
+            (int idLieferung, Date datum, String bezeichnung, String messungsfaktoren, String messung) {
         ContentValues values = new ContentValues();
 
         values.put(BitumenDBHelper.A_Lieferung_ID, idLieferung);
@@ -60,7 +61,9 @@ public class AlterungszustandDAO {
         values.put(BitumenDBHelper.Alterungszustand_Messungsfaktoren, messungsfaktoren);
         values.put(BitumenDBHelper.Alterungszustand_messung, messung);
 
+
         long insertId = database.insert(BitumenDBHelper.TABLE_Alterungszustand_LIST, null, values);
+
 
         Cursor cursor = database.query(BitumenDBHelper.TABLE_Alterungszustand_LIST,
                 columns, BitumenDBHelper.Alterungszustand_ID + "=" + insertId,
