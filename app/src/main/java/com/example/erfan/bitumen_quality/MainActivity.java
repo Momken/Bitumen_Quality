@@ -46,6 +46,7 @@ import com.example.erfan.bitumen_quality.DB.Probe;
 import java.sql.Date;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Pattern;
 
 
 /**
@@ -548,7 +549,7 @@ public class MainActivity extends AppCompatActivity  implements Runnable{
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                TextView info = (TextView) findViewById(R.id.Info);
+                TextView info = (TextView) findViewById(R.id.info);
                 info.setText("Connected");
             }
         });
@@ -773,9 +774,14 @@ public class MainActivity extends AppCompatActivity  implements Runnable{
                                    Log.d("MainActivity", "pretest:xxx"+ receiveddata.toString() +"xxx");
                                    String text = receiveddata.toString().replaceAll("\n","");
                                    Log.d("MainActivity", "run:xxx"+ text +"xxx");
-                                   TextView info = (TextView) findViewById(R.id.Info);
-
-                                   info.setText(text);
+                                   //String[] segs = text.split( Pattern.quote( "(\\s|\\p{Punct})+" ) );
+                                   String[] segs = text.split( Pattern.quote( ":" ) );
+                                   TextView info = (TextView) findViewById(R.id.info);
+                                   if(segs.length == 3) {
+                                       info.setText("Values:" + segs[2]);
+                                   }else{
+                                       info.setText(text);
+                                   }
                                }
                            });
                         }
@@ -791,7 +797,8 @@ public class MainActivity extends AppCompatActivity  implements Runnable{
                                 public void run() {
                                     String text = receiveddata.toString().replaceAll("\n","");
                                     Log.d("MainActivity", "run:xxx"+ text +"xxx");
-                                    TextView result = (TextView)findViewById(R.id.Result);
+                                    String[] segs = text.split( Pattern.quote( "(\\s|\\p{Punct})+" ) );
+                                    TextView result = (TextView)findViewById(R.id.result);
 
                                     result.setText(text);
                                 }
