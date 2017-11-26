@@ -1,6 +1,6 @@
 package com.example.erfan.bitumen_quality.DB;
 
-import java.sql.Date;
+import java.util.Date;
 
 /**
  * Created by Erfan on 05.11.2017.
@@ -10,12 +10,12 @@ public class Alterungszustand {
 
     private long id;
     private long probenId;
-    private Date date;
+    private String date;
     private String bezeichnung;
     private String messungsfaktoren;
     private String messung;
 
-    public Alterungszustand(long id, long probenId, Date date, String bezeichnung, String messungsfaktoren, String messung) {
+    public Alterungszustand(long id, long probenId, String date, String bezeichnung, String messungsfaktoren, String messung) {
         this.id = id;
         this.probenId = probenId;
         this.date = date;
@@ -40,11 +40,11 @@ public class Alterungszustand {
         this.probenId = probenId;
     }
 
-    public Date getDate() {
+    public String getDate() {
         return date;
     }
 
-    public void setDate(Date date) {
+    public void setDate(String date) {
         this.date = date;
     }
 
@@ -77,7 +77,7 @@ public class Alterungszustand {
         return "Alterungszustand{" +
                 "id=" + id +
                 ", probenId=" + probenId +
-                ", date=" + date +
+                ", date='" + date + '\'' +
                 ", bezeichnung='" + bezeichnung + '\'' +
                 ", messungsfaktoren='" + messungsfaktoren + '\'' +
                 ", messung='" + messung + '\'' +

@@ -9,7 +9,9 @@ import android.util.Log;
 import com.example.erfan.bitumen_quality.DB.Alterungszustand;
 import com.example.erfan.bitumen_quality.DB.BitumenDBHelper;
 
-import java.sql.Date;
+import java.text.DateFormat;
+import java.util.Date;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -56,7 +58,9 @@ public class AlterungszustandDAO {
         ContentValues values = new ContentValues();
 
         values.put(BitumenDBHelper.A_Lieferung_ID, idLieferung);
-        values.put(BitumenDBHelper.Alterungszustand_Datum, datum.toString());
+        DateFormat df = new SimpleDateFormat("dd/MM/yy HH:mm:ss");
+
+        values.put(BitumenDBHelper.Alterungszustand_Datum, df.format(datum));
         values.put(BitumenDBHelper.Alterungszustand_Bezeichnung, bezeichnung);
         values.put(BitumenDBHelper.Alterungszustand_Messungsfaktoren, messungsfaktoren);
         values.put(BitumenDBHelper.Alterungszustand_messung, messung);
@@ -92,13 +96,17 @@ public class AlterungszustandDAO {
         String bezeichnung = cursor.getString(idBezeichnung);
 
         //Todo check for the seystem
-        Date datum = new Date(cursor.getLong(idDatum)*1000);
+
+        String datum=cursor.getString(idDatum);
+
         long lId = cursor.getLong(idLId);
         long id = cursor.getLong(idIndex);
 
         Alterungszustand alterung = new Alterungszustand(id, lId, datum, bezeichnung, messungsFakt, messung);
-
         return alterung;
+
+
+
     }
 
     public List<Alterungszustand> getAllAlterungzustand() {

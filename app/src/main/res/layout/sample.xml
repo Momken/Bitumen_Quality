@@ -37,6 +37,12 @@
         android:text="Beschreibung"
         tools:text="Beschreibung" />
 
+    <ListView
+        android:id="@+id/listview_Sample"
+        android:layout_width="match_parent"
+        android:layout_height="300dp"
+        android:layout_weight="0.43" />
+
     <Button
         android:id="@+id/sampleSave"
         android:layout_width="match_parent"
@@ -50,11 +56,5 @@
         android:layout_height="wrap_content"
         android:layout_weight="0.02"
         android:text="Delete" />
-
-    <ListView
-        android:id="@+id/listview_Sample"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_weight="0.02" />
 
 </LinearLayout>

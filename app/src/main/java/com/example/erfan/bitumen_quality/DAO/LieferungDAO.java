@@ -96,10 +96,8 @@ public class LieferungDAO {
 
         Cursor cursor = database.query(BitumenDBHelper.TABLE_Lieferung_LIST,
                 columns, null, null, null, null, null);
-
         cursor.moveToFirst();
         Lieferung temp;
-
         while(!cursor.isAfterLast()) {
             temp = cursorToLieferung(cursor);
             list.add(temp);
@@ -108,6 +106,8 @@ public class LieferungDAO {
         }
 
         cursor.close();
+
+
 
         return list;
     }

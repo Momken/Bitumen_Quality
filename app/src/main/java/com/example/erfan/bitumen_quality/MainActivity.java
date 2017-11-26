@@ -11,10 +11,12 @@ import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.webkit.WebView;
 import android.widget.ArrayAdapter;
+import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.RatingBar;
+import android.widget.SimpleAdapter;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -41,10 +43,14 @@ import com.example.erfan.bitumen_quality.DAO.SorteDAO;
 import com.example.erfan.bitumen_quality.DB.Alterungszustand;
 import com.example.erfan.bitumen_quality.DB.Bitumen;
 import com.example.erfan.bitumen_quality.DAO.BitumenDAO;
+import com.example.erfan.bitumen_quality.DB.Lieferung;
 import com.example.erfan.bitumen_quality.DB.Probe;
 
 import java.sql.Date;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.regex.Pattern;
 
@@ -58,8 +64,8 @@ public class MainActivity extends AppCompatActivity  implements Runnable{
     public static final String LOG_TAG = MainActivity.class.getSimpleName();
 
     private BitumenDAO dataSource;
-    private SorteDAO dataSorte;
-    private LieferungDAO dataLieferung;
+    private SorteDAO dataSorte = new SorteDAO(this);
+    private LieferungDAO dataLieferung = new LieferungDAO(this);
     private ProbeDAO dataProbe =  new ProbeDAO(this);;
     private AlterungszustandDAO dataAlterungszustand = new AlterungszustandDAO(this);
     UsbCommunicationManager usb = null;
@@ -176,20 +182,32 @@ public class MainActivity extends AppCompatActivity  implements Runnable{
 
 
 
-        Spinner My_spinner = (Spinner) findViewById(R.id.Scann_SpinnerProbe);
-        ArrayAdapter<String> my_Adapter = new ArrayAdapter<String>
-                (this, android.R.layout.simple_spinner_item, getTableValuesProbe());
-
-
-
-        My_spinner.setAdapter(my_Adapter);
-
+        makeSpinner();
 
 
         //ToDo: sauber alle 3 butten richten
         activateAddButton();
         showAllListEntriesSampel();
         showAllListEntriesAlterung();
+
+    }
+
+    private void makeSpinner() {
+
+        Spinner My_spinner = (Spinner) findViewById(R.id.Scann_SpinnerProbe);
+        ArrayAdapter<String> my_Adapter = new ArrayAdapter<String>
+                (this, android.R.layout.simple_spinner_item, getTableValuesProbe());
+
+        My_spinner.setAdapter(my_Adapter);
+
+
+        Spinner My_spinner_Sample = (Spinner) findViewById(R.id.spinner_SampleDeliverd);
+        ArrayAdapter<String> my_Adapter_Sample = new ArrayAdapter<String>
+                (this, android.R.layout.simple_spinner_item, getTableValuesLieferung());
+
+        My_spinner_Sample.setAdapter(my_Adapter_Sample);
+
+
 
     }
 
@@ -272,6 +290,38 @@ public class MainActivity extends AppCompatActivity  implements Runnable{
         memosListView.setAdapter(shoppingMemoArrayAdapter);
         dataAlterungszustand.close();
     }
+    private void showAllListEntriesAlterung2 () {
+        dataAlterungszustand.open();
+        List<Alterungszustand> memoList = dataAlterungszustand.getAllAlterungzustand();
+
+        ArrayList<HashMap<String, String>> mylist = new ArrayList<HashMap<String, String>>();
+
+        for (int i = 0 ; i < memoList.size(); i++){
+            HashMap<String, String> map = new HashMap<String, String>();
+            Alterungszustand alterungszustand = memoList.get(i);
+            map.put("Bezeichnung",alterungszustand.getProbenId()+ " "+alterungszustand.getBezeichnung().toString());
+            map.put("Datum",alterungszustand.getDate().toString());
+            map.put("Faktoren", alterungszustand.getMessungsfaktoren());
+            map.put("Messung Daten",alterungszustand.getMessung());
+            mylist.add(map);
+        }
+
+
+        ArrayAdapter<Alterungszustand> shoppingMemoArrayAdapter = new ArrayAdapter<> (
+                this,
+                android.R.layout.simple_list_item_multiple_choice,
+                memoList);
+
+
+/*
+        //TODO make an base adapter
+        BaseAdapter memosListView = (BaseAdapter) findViewById(R.id.listview_Bitumen_memos);
+        ListViewAdapter adapter=new ListViewAdapter(this, list);
+        listView.setAdapter(adapter);
+        memosListView.setAdapter(shoppingMemoArrayAdapter);
+        dataAlterungszustand.close();*/
+    }
+
 
 
     @Override
@@ -333,8 +383,15 @@ public class MainActivity extends AppCompatActivity  implements Runnable{
 
 
                         dataProbe.open();
+                        dataLieferung.open();
+                        Log.d(LOG_TAG, lieferung);
+                        Log.d(LOG_TAG, dataLieferung.getAllLieferung(lieferung).toString());
+
+                        Long id = dataLieferung.getAllLieferung(lieferung).get(0).getId();
+                        Date dTemp = Date.valueOf(date);
                         dataProbe.createProbe(
-                                dataLieferung.getAllLieferung(lieferung).get(0).getId() , Date.valueOf(date) ,name, info);
+                                id , dTemp ,name, info);
+                        dataLieferung.close();
                         dataProbe.close();
 
                         InputMethodManager inputMethodManager;
@@ -387,13 +444,10 @@ public class MainActivity extends AppCompatActivity  implements Runnable{
                     return;
                 }
 
-                Date date = new java.sql.Date(new java.util.Date().getTime()) ;
-                Log.d(LOG_TAG, "Scanndaten:"+  "0 " +date.toString()+" " + internID+" "+name+" "+info+ " "+ed_messungsfaktoren.getText().toString()+ " "+ed_messung.getText().toString()  );
-
 
                 dataAlterungszustand.open();
                 dataAlterungszustand.createAlterungszustand
-                        (0, date, internID+":"+name+":"+info, ed_messungsfaktoren.getText().toString(), ed_messung.getText().toString()  );
+                        (0, new java.util.Date(), internID+":"+name+":"+info, ed_messungsfaktoren.getText().toString(), ed_messung.getText().toString()  );
                 dataAlterungszustand.close();
 
 
@@ -423,17 +477,42 @@ public class MainActivity extends AppCompatActivity  implements Runnable{
 
             List<Probe> list =  dataProbe.getAllProbe();
 
-
-
-            for(int i = 0; i<list.size() ;i++){
-                    String NAME = list.get(i).getBezeichnung();
-                    my_array.add(list.get(i).getId() +": "+ NAME);
+                for(int i = 0; i<list.size() ;i++){
+                        String NAME = list.get(i).getBezeichnung();
+                        my_array.add(NAME);
                 }
-            } catch (Exception e) {
+            dataProbe.close();
+
+        } catch (Exception e) {
             Toast.makeText(getApplicationContext(), "Error encountered.",
                     Toast.LENGTH_LONG);
         }
-        dataProbe.close();
+        return my_array;
+    }
+
+    public ArrayList<String> getTableValuesLieferung() {
+        ArrayList<String> my_array = new ArrayList<String>();
+        try {
+            dataLieferung.open();
+
+            List<Lieferung> list =  dataLieferung.getAllLieferung();
+
+            if(list.isEmpty()){
+                list.add(new Lieferung(0,0,null,"Empty",null));
+
+            }
+
+            for(int i = 0; i<list.size() ;i++){
+                String NAME = list.get(i).getBezeichnung();
+                my_array.add(NAME);
+            }
+
+            dataLieferung.close();
+
+        } catch (Exception e) {
+            Toast.makeText(getApplicationContext(), "Error encountered.",
+                    Toast.LENGTH_LONG);
+        }
         return my_array;
     }
 
