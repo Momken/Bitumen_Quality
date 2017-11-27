@@ -277,7 +277,7 @@ public class MainActivity extends AppCompatActivity  implements Runnable{
         dataProbe.close();
     }
 
-    private void showAllListEntriesAlterung () {
+    private void showAllListEntriesAlterung2 () {
         dataAlterungszustand.open();
         List<Alterungszustand> memoList = dataAlterungszustand.getAllAlterungzustand();
 
@@ -290,7 +290,7 @@ public class MainActivity extends AppCompatActivity  implements Runnable{
         memosListView.setAdapter(shoppingMemoArrayAdapter);
         dataAlterungszustand.close();
     }
-    private void showAllListEntriesAlterung2 () {
+    private void showAllListEntriesAlterung () {
         dataAlterungszustand.open();
         List<Alterungszustand> memoList = dataAlterungszustand.getAllAlterungzustand();
 
@@ -299,27 +299,36 @@ public class MainActivity extends AppCompatActivity  implements Runnable{
         for (int i = 0 ; i < memoList.size(); i++){
             HashMap<String, String> map = new HashMap<String, String>();
             Alterungszustand alterungszustand = memoList.get(i);
-            map.put("Bezeichnung",alterungszustand.getProbenId()+ " "+alterungszustand.getBezeichnung().toString());
-            map.put("Datum",alterungszustand.getDate().toString());
-            map.put("Faktoren", alterungszustand.getMessungsfaktoren());
-            map.put("Messung Daten",alterungszustand.getMessung());
+            map.put("FIRST_COLUMN",alterungszustand.getProbenId()+ " "+alterungszustand.getBezeichnung());
+            map.put("SECOND_COLUMN",alterungszustand.getDate());
+            map.put("THIRD_COLUMN",alterungszustand.getMessungsfaktoren());
+            map.put("FOURTH_COLUMN",alterungszustand.getMessung());
             mylist.add(map);
         }
-
-
-        ArrayAdapter<Alterungszustand> shoppingMemoArrayAdapter = new ArrayAdapter<> (
-                this,
-                android.R.layout.simple_list_item_multiple_choice,
-                memoList);
-
-
+        Log.d(LOG_TAG," count mylist: : "+mylist.size());
 /*
+        ArrayList<HashMap<String, String>> mylist = new ArrayList<HashMap<String, String>>();
+        HashMap<String, String> map = new HashMap<String, String>();
+        map.put("FIRST_COLUMN","a");
+        map.put("SECOND_COLUMN","b");
+        map.put("THIRD_COLUMN","c");
+        map.put("FOURTH_COLUMN","d");
+        mylist.add(map);
+
+*/
         //TODO make an base adapter
-        BaseAdapter memosListView = (BaseAdapter) findViewById(R.id.listview_Bitumen_memos);
-        ListViewAdapter adapter=new ListViewAdapter(this, list);
-        listView.setAdapter(adapter);
-        memosListView.setAdapter(shoppingMemoArrayAdapter);
-        dataAlterungszustand.close();*/
+        ListView memosListView =  (ListView) findViewById(R.id.listview_Bitumen_memos);
+        ListViewAdapter adapter=new ListViewAdapter(this, mylist);
+        Log.d(LOG_TAG,"Adapter count: "+adapter.getCount());
+        memosListView.setAdapter(adapter);
+        Log.d(LOG_TAG,"count listview: "+memosListView.getCount());
+        dataAlterungszustand.close();
+
+
+
+
+
+
     }
 
 

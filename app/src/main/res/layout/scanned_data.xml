@@ -50,15 +50,15 @@
                     android:text="Name" />
 
                 <Button
-                    android:id="@+id/BItumenScannDelete"
+                    android:id="@+id/BitumenScannDelete"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="Delete" />
 
                 <ListView
                     android:id="@+id/listview_Bitumen_memos"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
                     android:layout_gravity="center_horizontal"
                     android:layout_marginBottom="8dp"
                     android:layout_weight="325774.72"
