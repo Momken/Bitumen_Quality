@@ -473,6 +473,17 @@ public class MainActivity extends AppCompatActivity  implements Runnable{
 
 
 
+        /*
+            Connect Button
+         */
+        Button buttonConnect = (Button) findViewById(R.id.Scann_ConnectButton);
+        buttonConnect.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                setupSettings_USB();
+
+            }
+        });
 
 
     }
@@ -533,10 +544,11 @@ public class MainActivity extends AppCompatActivity  implements Runnable{
         StringBuilder data = new StringBuilder();
 
 
-            read(data);
 
-
-
+        if(read(data).equals("starting usb listening thread")) {
+            TextView info = (TextView) findViewById(R.id.Info);
+            info.setText("Connected");
+        }
            //  Toast.makeText(this, "setupSettings_USB: Data", Toast.LENGTH_SHORT).show();
 
       //  Toast.makeText(this, data.toString(), Toast.LENGTH_SHORT).show();
@@ -697,7 +709,7 @@ public class MainActivity extends AppCompatActivity  implements Runnable{
         }
 
         // get the first (only) connected device
-        Toast.makeText(context, "i got an USB connected", Toast.LENGTH_LONG).show();
+        Toast.makeText(context, "USB connected", Toast.LENGTH_LONG).show();
         Log.d("MainActivity", "i got an USB connected");
         usbDevice = usbManager.getDeviceList().values().iterator().next();
         //Log.d("MainActivity", usbDevice.toString());
@@ -914,12 +926,12 @@ public class MainActivity extends AppCompatActivity  implements Runnable{
                         //Log.d("MainActivity", "Hallo rabbit... " );
 
                         // toast.show();
-
+/*
                         try {
                             Thread.sleep(1000);
                         } catch (InterruptedException e) {
                             e.printStackTrace();
-                        }
+                        }*/
 
                         Pattern pResult = Pattern.compile("RESULT: Q1: (.+) -- Q2: (.+); absolute values: (.+) -- (.+) -- (.+); AMP: (.+)");
                         Pattern pOther = Pattern.compile("(INFO|ERROR): (.+)");
@@ -945,7 +957,7 @@ public class MainActivity extends AppCompatActivity  implements Runnable{
                                     TextView info = (TextView)findViewById(R.id.Info);
 
 //TODO erfan
-                                    String msg = "V1: "+ v1 +" V2: "+ v2 +" V3 "+ v3 +" AMP: " +amp;
+                                    String msg = "Raw Values: V1: "+ v1 +" V2: "+ v2 +" V3: "+ v3 +" AMP: " +amp;
                                     resultQ1.setText(q1+"");
                                     resultQ2.setText(q2+"");
                                     info.setText(msg);
@@ -961,17 +973,28 @@ public class MainActivity extends AppCompatActivity  implements Runnable{
                             runOnUiThread(new Runnable() {
                                 @Override
                                 public void run() {
+                                    TextView resultQ1 = (TextView)findViewById(R.id.textViewQ1_result);
+                                    TextView resultQ2 = (TextView)findViewById(R.id.textViewQ2_result);
+                                    TextView info = (TextView)findViewById(R.id.Info);
+                                    info.setText("");
                                     TextView result = (TextView)findViewById(R.id.Result);
-                                    if ("ERROR".equals(mOther.group(2))) {
+                                    if ("ERROR".equals(mOther.group(1))) {
+                                        resultQ1.setText("");
+                                        resultQ2.setText("");
                                         result.setTextColor(Color.RED);   // rot!
+                                    }else {
+                                        resultQ1.setText("Scanning...");
+                                        resultQ2.setText("Scanning...");
                                     }
-                                    result.setText(mOther.group(3));
+
+                                   Log.d("MainActivity mOther: ", mOther.group(2)) ;
+                                    result.setText(mOther.group(2));
                                 }
                             });
 
                         }
                         try {
-                            Thread.sleep(1000);
+                            Thread.sleep(300);
                         } catch (InterruptedException e) {
                             e.printStackTrace();
                         }
