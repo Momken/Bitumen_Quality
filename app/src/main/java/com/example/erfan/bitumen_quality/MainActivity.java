@@ -1,6 +1,7 @@
 package com.example.erfan.bitumen_quality;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
@@ -11,12 +12,10 @@ import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.webkit.WebView;
 import android.widget.ArrayAdapter;
-import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.RatingBar;
-import android.widget.SimpleAdapter;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -47,11 +46,10 @@ import com.example.erfan.bitumen_quality.DB.Lieferung;
 import com.example.erfan.bitumen_quality.DB.Probe;
 
 import java.sql.Date;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 
@@ -425,8 +423,9 @@ public class MainActivity extends AppCompatActivity  implements Runnable{
         final EditText editTextScann_Name = (EditText) findViewById(R.id.Scann_Name);
         final EditText editTextScann_InternID = (EditText) findViewById(R.id.Scann_intern_number_id);
         final Spinner editTextSample = (Spinner) findViewById(R.id.Scann_SpinnerProbe);
-        final TextView ed_messungsfaktoren = (TextView) findViewById(R.id.Result);
-        final TextView ed_messung = (TextView) findViewById(R.id.Info);
+        final TextView ed_messungsfaktoren = (TextView) findViewById(R.id.Info);
+        final TextView ed_messung1 = (TextView) findViewById(R.id.textViewQ1_result);
+        final TextView ed_messung2 = (TextView) findViewById(R.id.textViewQ2_result);
 
                 buttonAddScann.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -456,7 +455,7 @@ public class MainActivity extends AppCompatActivity  implements Runnable{
 
                 dataAlterungszustand.open();
                 dataAlterungszustand.createAlterungszustand
-                        (0, new java.util.Date(), internID+":"+name+":"+info, ed_messungsfaktoren.getText().toString(), ed_messung.getText().toString()  );
+                        (0, new java.util.Date(), internID+":"+name+":"+info, ed_messungsfaktoren.getText().toString(), ed_messung1.getText().toString() + " " + ed_messung2.getText().toString()  );
                 dataAlterungszustand.close();
 
 
@@ -548,7 +547,7 @@ public class MainActivity extends AppCompatActivity  implements Runnable{
 
 
     private void setupSettings_Bitumen() {
-        Button BitumenSettings = (Button) findViewById(R.id.action_Bitumen);
+        Button BitumenSettings = (Button) findViewById(R.id.action_Sample);
 
     }
 
@@ -573,8 +572,8 @@ public class MainActivity extends AppCompatActivity  implements Runnable{
             setupSettings_USB();
             return true;
         }
-        else if(id == R.id.action_Bitumen){
-            Toast.makeText(this, "You have selected Bitumen Menu", Toast.LENGTH_SHORT).show();
+        else if(id == R.id.action_Sample){
+            Toast.makeText(this, "You have selected Details Menu", Toast.LENGTH_SHORT).show();
             Intent intent = new Intent(getApplicationContext(), BitumenDatenbankActivity.class);
             startActivity(intent);
 
@@ -647,7 +646,7 @@ public class MainActivity extends AppCompatActivity  implements Runnable{
         //Tab 1
         TabHost.TabSpec spec = host.newTabSpec("Tab One");
         spec.setContent(R.id.tab1);
-        spec.setIndicator("Bitumen Scan");
+        spec.setIndicator("Scan");
         host.addTab(spec);
 
         //Tab 2
@@ -666,7 +665,7 @@ public class MainActivity extends AppCompatActivity  implements Runnable{
         //Tab 4
         spec = host.newTabSpec("Tab Two");
         spec.setContent(R.id.tab2);
-        spec.setIndicator("Sample");
+        spec.setIndicator("Sample Properties");
         host.addTab(spec);
     }
 
@@ -922,49 +921,62 @@ public class MainActivity extends AppCompatActivity  implements Runnable{
                             e.printStackTrace();
                         }
 
+                        Pattern pResult = Pattern.compile("RESULT: Q1: (.+) -- Q2: (.+); absolute values: (.+) -- (.+) -- (.+); AMP: (.+)");
+                        Pattern pOther = Pattern.compile("(INFO|ERROR): (.+)");
 
-                        if(receiveddata.toString().contains("INFO:")){
-                           runOnUiThread(new Runnable() {
-                               @Override
-                               public void run() {
-                                   Log.d("MainActivity", "pretest:xxx"+ receiveddata.toString() +"xxx");
-                                   String text = receiveddata.toString().replaceAll("\n","");
-                                   Log.d("MainActivity", "run:xxx"+ text +"xxx");
-                                   //String[] segs = text.split( Pattern.quote( "(\\s|\\p{Punct})+" ) );
-                                   String[] segs = text.split( Pattern.quote( ":" ) );
-                                   TextView info = (TextView) findViewById(R.id.Info);
-                                   if(segs.length == 3) {
-                                       info.setText("Values:" + segs[2]);
-                                   }else{
-                                       info.setText(text);
-                                   }
-                               }
-                           });
-                        }
+                        String msg = receiveddata.toString().trim();
 
-                        try {
-                            Thread.sleep(1000);
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                        }
-                        if(receiveddata.toString().contains("RESULT:")){
+                        final Matcher mResult = pResult.matcher(msg);
+                        final Matcher mOther = pOther.matcher(msg);
+
+                        if (mResult.find()) {
+                            final float q1 = Float.parseFloat(mResult.group(1));
+                            final float q2 = Float.parseFloat(mResult.group(2));
+                            final float v1 = Float.parseFloat(mResult.group(3));
+                            final float v2 = Float.parseFloat(mResult.group(4));
+                            final float v3 = Float.parseFloat(mResult.group(5));
+                            final float amp = Float.parseFloat(mResult.group(6));
                             runOnUiThread(new Runnable() {
                                 @Override
                                 public void run() {
-                                    String text = receiveddata.toString().replaceAll("\n","");
-                                    Log.d("MainActivity", "run:xxx"+ text +"xxx");
-                                    String[] segs = text.split( Pattern.quote( "(\\s|\\p{Punct})+" ) );
-                                    TextView result = (TextView)findViewById(R.id.Result);
 
-                                    result.setText(text);
+                                    TextView resultQ1 = (TextView)findViewById(R.id.textViewQ1_result);
+                                    TextView resultQ2 = (TextView)findViewById(R.id.textViewQ2_result);
+                                    TextView info = (TextView)findViewById(R.id.Info);
+
+//TODO erfan
+                                    String msg = "V1: "+ v1 +" V2: "+ v2 +" V3 "+ v3 +" AMP: " +amp;
+                                    resultQ1.setText(q1+"");
+                                    resultQ2.setText(q2+"");
+                                    info.setText(msg);
+                                    TextView result = (TextView)findViewById(R.id.Result);
+                                    result.setText("");
                                 }
                             });
+
+                        }
+                        else if (mOther.find()) {
+
+
+                            runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    TextView result = (TextView)findViewById(R.id.Result);
+                                    if ("ERROR".equals(mOther.group(2))) {
+                                        result.setTextColor(Color.RED);   // rot!
+                                    }
+                                    result.setText(mOther.group(3));
+                                }
+                            });
+
                         }
                         try {
                             Thread.sleep(1000);
                         } catch (InterruptedException e) {
                             e.printStackTrace();
                         }
+
+
 
 
 

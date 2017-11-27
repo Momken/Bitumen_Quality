@@ -98,7 +98,7 @@ public class BitumenDatenbankActivity extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_bitumen_datenban, menu);
+        getMenuInflater().inflate(R.menu.menu_bitumen_datenbank, menu);
         return true;
     }
 
@@ -163,13 +163,13 @@ public class BitumenDatenbankActivity extends AppCompatActivity {
             //Tab 1
             TabHost.TabSpec spec = host.newTabSpec("Delivery");
             spec.setContent(R.id.Delivery);
-            spec.setIndicator("Delivery");
+            spec.setIndicator("Deliverd Items");
             host.addTab(spec);
 
             //Tab 2
             spec = host.newTabSpec("Sort");
             spec.setContent(R.id.Sort);
-            spec.setIndicator("Sort");
+            spec.setIndicator("Sort Type");
             host.addTab(spec);
 
             //Tab 3
