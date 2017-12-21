@@ -80,6 +80,17 @@ public class AlterungszustandDAO {
         return alterung;
     }
 
+    public void deleteAlterungszustand(Alterungszustand temp) {
+        long id = temp.getId();
+
+        database.delete(BitumenDBHelper.TABLE_Alterungszustand_LIST,
+                BitumenDBHelper.Alterungszustand_ID + "=" + id,
+                null);
+
+        Log.d(LOG_TAG, "Eintrag gelöscht! ID: " + id + " Inhalt: " + temp.toString());
+    }
+
+
     private Alterungszustand cursorToAlterungszustand(Cursor cursor) {
 
 
@@ -121,6 +132,28 @@ public class AlterungszustandDAO {
         while(!cursor.isAfterLast()) {
             alterung = cursorToAlterungszustand(cursor);
             list.add(alterung);
+            cursor.moveToNext();
+        }
+
+        cursor.close();
+
+        return list;
+    }
+
+
+    public List<Alterungszustand> getAllAlterungzustand(String name) {
+        List<Alterungszustand> list = new ArrayList<>();
+
+        Cursor cursor = database.query(BitumenDBHelper.TABLE_Alterungszustand_LIST,
+                columns, null, null, null, null, null);
+
+        cursor.moveToFirst();
+        Alterungszustand temp;
+
+        while(!cursor.isAfterLast()) {
+            temp = cursorToAlterungszustand(cursor);
+            if(temp.getBezeichnung().equals(name))
+                list.add(temp);
             cursor.moveToNext();
         }
 

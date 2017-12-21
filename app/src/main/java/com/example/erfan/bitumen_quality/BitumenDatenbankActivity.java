@@ -13,6 +13,8 @@ import android.support.v4.view.ViewPager;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
+import android.util.SparseBooleanArray;
+import android.view.ActionMode;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -20,6 +22,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import android.view.inputmethod.InputMethodManager;
+import android.widget.AbsListView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
@@ -28,6 +31,7 @@ import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.TabHost;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.erfan.bitumen_quality.DAO.HerstellerDAO;
 import com.example.erfan.bitumen_quality.DAO.LieferungDAO;
@@ -38,6 +42,8 @@ import com.example.erfan.bitumen_quality.DB.Lieferung;
 import com.example.erfan.bitumen_quality.DB.Sorte;
 
 import java.sql.Date;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 public class BitumenDatenbankActivity extends AppCompatActivity {
@@ -92,9 +98,6 @@ public class BitumenDatenbankActivity extends AppCompatActivity {
     }
 
 
-
-
-
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -129,6 +132,7 @@ public class BitumenDatenbankActivity extends AppCompatActivity {
         private SorteDAO dataSource6;
         private HerstellerDAO dataHersteller;
         private LieferungDAO dataLieferung;
+
 
 
 
@@ -178,6 +182,23 @@ public class BitumenDatenbankActivity extends AppCompatActivity {
             spec.setIndicator("Provider");
             host.addTab(spec);
 
+
+            showAllListEntries(rootView);
+            makeSpinner(rootView);
+            activateAddButton(rootView);
+
+            initializeContextualActionBarSorte(rootView);
+            initializeContextualActionBarHersteller(rootView);
+            initializeContextualActionBarLieferung(rootView);
+
+            super.onCreate(savedInstanceState);
+            Log.d("MainActivity", "activity_bitumen2: Measure");
+
+            return rootView;
+        }
+
+        private void showAllListEntries(View rootView){
+
             dataSource6 = new SorteDAO(getContext());
             dataSource6.open();
             showAllListEntriesSorte(rootView);
@@ -194,58 +215,352 @@ public class BitumenDatenbankActivity extends AppCompatActivity {
             dataLieferung.open();
             showAllListEntriesLieferung(rootView);
             dataLieferung.close();
-
-
-            super.onCreate(savedInstanceState);
-            Log.d("MainActivity", "activity_bitumen2: Measure");
-
-            return rootView;
         }
 
+        private void makeSpinner(View rootView) {
+
+            Spinner My_spinner = (Spinner) rootView.findViewById(R.id.lieferungFirmaSpinner);
+            ArrayAdapter<String> my_Adapter = new ArrayAdapter<String>
+                    (getActivity(), android.R.layout.simple_spinner_item, getTableValuesHersteller());
+
+            My_spinner.setAdapter(my_Adapter);
+
+
+            Spinner My_spinner_Sample = (Spinner) rootView.findViewById(R.id.spinnerHerstellerSorte);
+            ArrayAdapter<String> my_Adapter_Sample = new ArrayAdapter<String>
+                    (getActivity(), android.R.layout.simple_spinner_item, getTableValuesSorte());
+
+            My_spinner_Sample.setAdapter(my_Adapter_Sample);
+
+
+
+        }
+        public ArrayList<String> getTableValuesHersteller() {
+            ArrayList<String> my_array = new ArrayList<String>();
+            try {
+                dataHersteller.open();
+
+                List<Hersteller> list =  dataHersteller.getAllHersteller();
+
+
+                for(int i = 0; i<list.size() ;i++){
+                    dataSource6.open();
+                    String SorteName = "";
+                    List<Sorte> lists = dataSource6.getAllSorte();
+                    for (int j =  0 ; j < lists.size(); j++){
+                        if(lists.get(j).getId() == list.get(i).getSortenId()){
+                            SorteName = lists.get(j).getBezeichnung();
+                            break;
+                        }
+                    }
+                        String NAME = list.get(i).getName() + " " + SorteName;
+                        my_array.add(NAME);
+                }
+
+                    dataSource6.close();
+
+                dataHersteller.close();
+
+            } catch (Exception e) {
+                Toast.makeText(getActivity().getApplicationContext(), "Error encountered.",
+                        Toast.LENGTH_LONG);
+            }
+            return my_array;
+        }
+        public ArrayList<String> getTableValuesSorte() {
+            ArrayList<String> my_array = new ArrayList<String>();
+            try {
+                dataSource6.open();
+
+                List<Sorte> list =  dataSource6.getAllSorte();
+
+                for(int i = 0; i<list.size() ;i++){
+                    String NAME = list.get(i).getBezeichnung();
+                    my_array.add(NAME);
+                }
+                dataSource6.close();
+
+            } catch (Exception e) {
+                Toast.makeText(getActivity().getApplicationContext(), "Error encountered.",
+                        Toast.LENGTH_LONG);
+            }
+            return my_array;
+        }
+
+
+
+        private void initializeContextualActionBarSorte(final View rootview) {
+
+            final ListView listView = (ListView) rootview.findViewById(R.id.listview_Sorte);
+            listView.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE_MODAL);
+
+            listView.setMultiChoiceModeListener(new AbsListView.MultiChoiceModeListener() {
+
+                @Override
+                public void onItemCheckedStateChanged(ActionMode mode, int position, long id, boolean checked) {
+
+                }
+
+                @Override
+                public boolean onCreateActionMode(ActionMode mode, Menu menu) {
+                    AppCompatActivity a = (AppCompatActivity)getActivity();
+                    a.getMenuInflater().inflate(R.menu.menu_contextual_action_bar, menu);
+                    return true;
+                }
+
+                @Override
+                public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
+                    return false;
+                }
+
+                @Override
+                public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
+                    switch (item.getItemId()) {
+
+                        case R.id.cab_delete:
+                            SparseBooleanArray touchedShoppingMemosPositions = listView.getCheckedItemPositions();
+                            for (int i=0; i < touchedShoppingMemosPositions.size(); i++) {
+                                boolean isChecked = touchedShoppingMemosPositions.valueAt(i);
+                                if(isChecked) {
+                                    int postitionInListView = touchedShoppingMemosPositions.keyAt(i);
+                                    HashMap<Integer, Object> temp = (HashMap<Integer, Object>) listView.getItemAtPosition(postitionInListView);
+                                    dataSource6.open();
+                                    dataSource6.deleteSorte(dataSource6.getAllSorte().get(postitionInListView));
+                                    dataSource6.close();
+
+                                }
+                            }
+                            showAllListEntries(rootview);
+                            mode.finish();
+                            return true;
+
+                        default:
+                            return false;
+                    }
+                }
+
+                @Override
+                public void onDestroyActionMode(ActionMode mode) {
+
+                }
+            });
+        }
+
+        private void initializeContextualActionBarHersteller(final View rootview) {
+
+            final ListView listView = (ListView) rootview.findViewById(R.id.listview_Provider);
+            listView.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE_MODAL);
+
+            listView.setMultiChoiceModeListener(new AbsListView.MultiChoiceModeListener() {
+
+                @Override
+                public void onItemCheckedStateChanged(ActionMode mode, int position, long id, boolean checked) {
+
+                }
+
+                @Override
+                public boolean onCreateActionMode(ActionMode mode, Menu menu) {
+                    AppCompatActivity a = (AppCompatActivity)getActivity();
+                    a.getMenuInflater().inflate(R.menu.menu_contextual_action_bar, menu);
+                    return true;
+                }
+
+                @Override
+                public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
+                    return false;
+                }
+
+                @Override
+                public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
+                    switch (item.getItemId()) {
+
+                        case R.id.cab_delete:
+                            SparseBooleanArray touchedShoppingMemosPositions = listView.getCheckedItemPositions();
+                            for (int i=0; i < touchedShoppingMemosPositions.size(); i++) {
+                                boolean isChecked = touchedShoppingMemosPositions.valueAt(i);
+                                if(isChecked) {
+                                    int postitionInListView = touchedShoppingMemosPositions.keyAt(i);
+                                    HashMap<Integer, Object> temp = (HashMap<Integer, Object>) listView.getItemAtPosition(postitionInListView);
+                                    dataHersteller.open();
+                                    dataHersteller.deleteHersteller(dataHersteller.getAllHersteller().get(postitionInListView));
+                                    dataHersteller.close();
+
+                                }
+                            }
+                            showAllListEntries(rootview);
+                            mode.finish();
+                            return true;
+
+                        default:
+                            return false;
+                    }
+                }
+                @Override
+                public void onDestroyActionMode(ActionMode mode) {
+
+                }
+            });
+        }
+
+                private void initializeContextualActionBarLieferung(final View rootview) {
+
+                    final ListView listView = (ListView) rootview.findViewById(R.id.listview_FaktorySampel);
+                    listView.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE_MODAL);
+
+                    listView.setMultiChoiceModeListener(new AbsListView.MultiChoiceModeListener() {
+
+                        @Override
+                        public void onItemCheckedStateChanged(ActionMode mode, int position, long id, boolean checked) {
+
+                        }
+
+                        @Override
+                        public boolean onCreateActionMode(ActionMode mode, Menu menu) {
+                            AppCompatActivity a = (AppCompatActivity)getActivity();
+                            a.getMenuInflater().inflate(R.menu.menu_contextual_action_bar, menu);
+                            return true;
+                        }
+
+                        @Override
+                        public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
+                            return false;
+                        }
+
+                        @Override
+                        public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
+                            switch (item.getItemId()) {
+
+                                case R.id.cab_delete:
+                                    SparseBooleanArray touchedShoppingMemosPositions = listView.getCheckedItemPositions();
+                                    for (int i=0; i < touchedShoppingMemosPositions.size(); i++) {
+                                        boolean isChecked = touchedShoppingMemosPositions.valueAt(i);
+                                        if(isChecked) {
+                                            int postitionInListView = touchedShoppingMemosPositions.keyAt(i);
+                                            HashMap<Integer, Object> temp = (HashMap<Integer, Object>) listView.getItemAtPosition(postitionInListView);
+                                            dataLieferung.open();
+                                            dataLieferung.deleteLieferung(dataLieferung.getAllLieferung().get(postitionInListView));
+                                            dataLieferung.close();
+
+                                        }
+                                    }
+                                    showAllListEntries(rootview);
+                                    mode.finish();
+                                    return true;
+
+                                default:
+                                    return false;
+                            }
+                        }
+
+                        @Override
+                        public void onDestroyActionMode(ActionMode mode) {
+
+                        }
+                    });
+                }
+
+
+
+
         private void showAllListEntriesSorte (View rootview) {
+
             List<Sorte> memoList = dataSource6.getAllSorte();
 
-            ArrayAdapter<Sorte> shoppingMemoArrayAdapter = new ArrayAdapter<> (
-                    rootview.getContext(),
-                    android.R.layout.simple_list_item_multiple_choice,
-                    memoList);
+            ArrayList<HashMap<String, String>> mylist = new ArrayList<HashMap<String, String>>();
+            for (int i = 0 ; i < memoList.size(); i++){
+                HashMap<String, String> map = new HashMap<String, String>();
+                Sorte sorte = memoList.get(i);
 
-            //LinearLayout layout = (LinearLayout) findViewById(R.id.sorteLinearLayout);
-            ListView memosListView = (ListView) rootview.findViewById(R.id.listview_Sorte);
-            memosListView.setAdapter(shoppingMemoArrayAdapter);
+                map.put("FIRST_COLUMN",  ""+ sorte.getBezeichnung() );
+                map.put("SECOND_COLUMN"," " );
+                map.put("THIRD_COLUMN"," "+  sorte.getBeschreibung());
+                map.put("FOURTH_COLUMN"," " );
+                mylist.add(map);
+            }
+
+
+            Log.d("MainActivity", "count mylist:"+ mylist.size());
+            //TODO make an base adapter
+
+            ListView memosListView =  (ListView) rootview.findViewById(R.id.listview_Sorte);
+            ListViewAdapter adapter= new ListViewAdapter(getActivity(), mylist);
+            memosListView.setAdapter(adapter);
 
         }
 
         private void showAllListEntriesHersteller (View rootview) {
+
             List<Hersteller> memoList = dataHersteller.getAllHersteller();
 
-            ArrayAdapter<Hersteller> shoppingMemoArrayAdapter = new ArrayAdapter<> (
-                    rootview.getContext(),
-                    android.R.layout.simple_list_item_multiple_choice,
-                    memoList);
+            ArrayList<HashMap<String, String>> mylist = new ArrayList<HashMap<String, String>>();
+            dataSource6.open();
+            List<Sorte> list =  dataSource6.getAllSorte();
+            dataSource6.close();
+            String SorteName="";
+            for (int i = 0 ; i < memoList.size(); i++){
+                HashMap<String, String> map = new HashMap<String, String>();
+                Hersteller hersteller = memoList.get(i);
 
-            //LinearLayout layout = (LinearLayout) findViewById(R.id.sorteLinearLayout);
-            ListView memosListView = (ListView) rootview.findViewById(R.id.listview_Provider);
-            memosListView.setAdapter(shoppingMemoArrayAdapter);
+                for (int j =  0 ; j < list.size(); j++){
+                    if(list.get(j).getId() == hersteller.getSortenId()){
+                        SorteName = list.get(j).getBezeichnung();
+                        break;
+                    }
+                }
+                map.put("FIRST_COLUMN",  hersteller.getName() );
+                map.put("SECOND_COLUMN"," "+ SorteName );
+                map.put("THIRD_COLUMN"," "+ hersteller.getBeschreibung() );
+                map.put("FOURTH_COLUMN"," " );
+                mylist.add(map);
+            }
+
+            //TODO make an base adapter
+
+            ListView memosListView =  (ListView) rootview.findViewById(R.id.listview_Provider);
+            ListViewAdapter adapter= new ListViewAdapter(getActivity(), mylist);
+            memosListView.setAdapter(adapter);
 
         }
+
 
 
         private void showAllListEntriesLieferung (View rootview) {
+
             List<Lieferung> memoList = dataLieferung.getAllLieferung();
 
-            ArrayAdapter<Lieferung> shoppingMemoArrayAdapter = new ArrayAdapter<> (
-                    rootview.getContext(),
-                    android.R.layout.simple_list_item_multiple_choice,
-                    memoList);
+            ArrayList<HashMap<String, String>> mylist = new ArrayList<HashMap<String, String>>();
+            dataHersteller.open();
+            List<Hersteller> list =  dataHersteller.getAllHersteller();
+            dataHersteller.close();
+            String herstellerName="";
+            for (int i = 0 ; i < memoList.size(); i++){
+                HashMap<String, String> map = new HashMap<String, String>();
+                Lieferung lieferung = memoList.get(i);
 
-            //LinearLayout layout = (LinearLayout) findViewById(R.id.sorteLinearLayout);
-            ListView memosListView = (ListView) rootview.findViewById(R.id.listview_FaktorySampel);
-            memosListView.setAdapter(shoppingMemoArrayAdapter);
+                for (int j =  0 ; j < list.size(); j++){
+                    if(list.get(j).getId() == lieferung.getHerstllerId()){
+                        herstellerName = list.get(j).getName();
+                        break;
+                    }
+                }
+                map.put("FIRST_COLUMN",  lieferung.getBezeichnung() );
+                map.put("SECOND_COLUMN"," "+ herstellerName );
+                map.put("THIRD_COLUMN"," "+ lieferung.getBeschreibung() );
+                map.put("FOURTH_COLUMN"," "+ lieferung.getDate());
+                mylist.add(map);
+            }
+
+            //TODO make an base adapter
+
+            ListView memosListView =  (ListView) rootview.findViewById(R.id.listview_FaktorySampel);
+            ListViewAdapter adapter= new ListViewAdapter(getActivity(), mylist);
+            memosListView.setAdapter(adapter);
 
         }
 
-        private void activateAddButton(View rootview) {
+
+
+        private void activateAddButton(final View rootview) {
 
             /*
                 Delivery Save
@@ -255,12 +570,10 @@ public class BitumenDatenbankActivity extends AppCompatActivity {
             final EditText editTextInfo = (EditText) rootview.findViewById(R.id.BescheibungLieferung);
             final EditText editTextName = (EditText) rootview.findViewById(R.id.BezeichnungLieferung);
             final EditText editTextDate = (EditText) rootview.findViewById(R.id.DateLieferung);
-            final Spinner editTextLSorte = (Spinner) rootview.findViewById(R.id.lieferungSorteSpinner);
             final Spinner editTextLHersteller = (Spinner) rootview.findViewById(R.id.lieferungFirmaSpinner);
 
 
-/*
-            //todo save butten Programmieren
+
             buttonAddDelivery.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -268,7 +581,8 @@ public class BitumenDatenbankActivity extends AppCompatActivity {
                     String info = editTextInfo.getText().toString();
                     String name = editTextName.getText().toString();
                     String date = editTextDate.getText().toString();
-                    String lieferungSorte = editTextLSorte.getSelectedItem().toString();
+                    String lieferungHersteller = editTextLHersteller.getSelectedItem().toString();
+
 
                     if(TextUtils.isEmpty(info)) {
                         editTextInfo.setError(getString(R.string.output_errorMessage));
@@ -282,36 +596,125 @@ public class BitumenDatenbankActivity extends AppCompatActivity {
                         editTextDate.setError(getString(R.string.output_errorMessage));
                         return;
                     }
-                    if(TextUtils.isEmpty(lieferungSorte)) {
+                    if(TextUtils.isEmpty(lieferungHersteller)) {
                         //todo error
                         return;
                     }
 
-                    long herstllerId, Date date, String bezeichnung, String beschreibung) {
-                        ContentValues values = new ContentValues()
+                    dataHersteller.open();
+                    dataLieferung.open();
 
-                    dataLieferung.createLieferung(
-                            dataHersteller.getAllHersteller(editTextLHersteller).get(0).getId() , Date.valueOf(date) ,name, info);
-
+                    Long id = dataHersteller.getAllHersteller(lieferungHersteller).get(0).getId();
+                    Date dTemp = Date.valueOf(date);
+                    dataLieferung.createLieferung(id, dTemp, name, info);
+                    dataLieferung.close();
+                    dataHersteller.close();
 
                     InputMethodManager inputMethodManager;
-                    inputMethodManager = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
-                    if(getCurrentFocus() != null) {
-                        inputMethodManager.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
+                    inputMethodManager = (InputMethodManager) getActivity().getSystemService(INPUT_METHOD_SERVICE);
+                    if(getActivity().getCurrentFocus() != null) {
+                        inputMethodManager.hideSoftInputFromWindow(getActivity().getCurrentFocus().getWindowToken(), 0);
                     }
 
-                    showAllListEntriesSampel();
+                    showAllListEntries(rootview);
+                    //makeSpinner(rootview);
                 }
-            });*/
+            });
 
+
+            Button buttonAddProvider = (Button) rootview.findViewById(R.id.ProviderSave);
+            final EditText editTextPInfo = (EditText) rootview.findViewById(R.id.providerInfo);
+            final EditText editTextPName = (EditText) rootview.findViewById(R.id.providerName);
+            final Spinner editTextPSorte = (Spinner) rootview.findViewById(R.id.spinnerHerstellerSorte);
+
+
+
+            buttonAddProvider.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+
+                    String info = editTextPInfo.getText().toString();
+                    String name = editTextPName.getText().toString();
+                    String herstellerSorte = editTextPSorte.getSelectedItem().toString();
+
+
+                    if(TextUtils.isEmpty(info)) {
+                        editTextInfo.setError(getString(R.string.output_errorMessage));
+                        return;
+                    }
+                    if(TextUtils.isEmpty(name)) {
+                        editTextName.setError(getString(R.string.output_errorMessage));
+                        return;
+                    }
+                    if(TextUtils.isEmpty(herstellerSorte)) {
+                        //todo error
+                        return;
+                    }
+
+                    dataSource6.open();
+                    dataHersteller.open();
+
+                    Long id = dataSource6.getAllSorte(herstellerSorte).get(0).getId();
+                    dataHersteller.createHersteller(id, name, info);
+                    dataSource6.close();
+                    dataHersteller.close();
+
+                    InputMethodManager inputMethodManager;
+                    inputMethodManager = (InputMethodManager) getActivity().getSystemService(INPUT_METHOD_SERVICE);
+                    if(getActivity().getCurrentFocus() != null) {
+                        inputMethodManager.hideSoftInputFromWindow(getActivity().getCurrentFocus().getWindowToken(), 0);
+                    }
+
+                    showAllListEntries(rootview);
+                }
+            });
+
+
+            Button buttonAddSort = (Button) rootview.findViewById(R.id.sampleSave);
+            final EditText editTextSInfo = (EditText) rootview.findViewById(R.id.sampleInfo);
+            final EditText editTextSName = (EditText) rootview.findViewById(R.id.sampleName);
+
+
+            buttonAddProvider.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+
+                    String info = editTextPInfo.getText().toString();
+                    String name = editTextPName.getText().toString();
+
+
+                    if(TextUtils.isEmpty(info)) {
+                        editTextInfo.setError(getString(R.string.output_errorMessage));
+                        return;
+                    }
+                    if(TextUtils.isEmpty(name)) {
+                        editTextName.setError(getString(R.string.output_errorMessage));
+                        return;
+                    }
+
+                    dataSource6.open();
+
+                    dataSource6.createSorte(name, info);
+                    dataSource6.close();
+
+                    InputMethodManager inputMethodManager;
+                    inputMethodManager = (InputMethodManager) getActivity().getSystemService(INPUT_METHOD_SERVICE);
+                    if(getActivity().getCurrentFocus() != null) {
+                        inputMethodManager.hideSoftInputFromWindow(getActivity().getCurrentFocus().getWindowToken(), 0);
+                    }
+
+                    showAllListEntries(rootview);
+                }
+            });
+
+            
+            
+            
+            
         }
 
 
         }
-
-
-
-
 
 
 

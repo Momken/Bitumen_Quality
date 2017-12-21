@@ -70,6 +70,17 @@ public class LieferungDAO {
         return lieferung;
     }
 
+
+    public void deleteLieferung(Lieferung temp) {
+        long id = temp.getId();
+
+        database.delete(BitumenDBHelper.TABLE_Lieferung_LIST,
+                BitumenDBHelper.Lieferung_ID + "=" + id,
+                null);
+
+        Log.d(LOG_TAG, "Eintrag gelöscht! ID: " + id + " Inhalt: " + temp.toString());
+    }
+
     private Lieferung cursorToLieferung(Cursor cursor) {
 
         int idLieferung = cursor.getColumnIndex(BitumenDBHelper.Lieferung_ID);

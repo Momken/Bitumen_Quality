@@ -66,6 +66,17 @@ public class SorteDAO {
         return sorte;
     }
 
+
+    public void deleteSorte(Sorte temp) {
+        long id = temp.getId();
+
+        database.delete(BitumenDBHelper.TABLE_Sorte_LIST,
+                BitumenDBHelper.Sorte_ID + "=" + id,
+                null);
+
+        Log.d(LOG_TAG, "Eintrag gelöscht! ID: " + id + " Inhalt: " + temp.toString());
+    }
+
     private Sorte cursorToSorte(Cursor cursor) {
 
         int idSorte = cursor.getColumnIndex(BitumenDBHelper.Sorte_ID);
@@ -102,6 +113,29 @@ public class SorteDAO {
 
         return list;
     }
+
+    public List<Sorte> getAllSorte(String name) {
+        List<Sorte> list = new ArrayList<>();
+
+        Cursor cursor = database.query(BitumenDBHelper.TABLE_Sorte_LIST,
+                columns, null, null, null, null, null);
+
+        cursor.moveToFirst();
+        Sorte temp;
+
+        while(!cursor.isAfterLast()) {
+            temp = cursorToSorte(cursor);
+            if(temp.getBezeichnung().equals(name))
+                list.add(temp);
+
+            cursor.moveToNext();
+        }
+
+        cursor.close();
+
+        return list;
+    }
+
 
 
 

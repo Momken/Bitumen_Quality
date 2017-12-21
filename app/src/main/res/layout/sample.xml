@@ -21,7 +21,7 @@
         android:layout_weight="0.02"
         android:ems="10"
         android:inputType="date"
-        android:text="Date" />
+        android:text="JJJJ-MM-DD" />
 
     <AutoCompleteTextView
         android:id="@+id/sampleName"
@@ -38,12 +38,6 @@
         android:text="Beschreibung"
         tools:text="Beschreibung" />
 
-    <ListView
-        android:id="@+id/listview_Sample"
-        android:layout_width="match_parent"
-        android:layout_height="300dp"
-        android:layout_weight="0.43" />
-
     <Button
         android:id="@+id/sampleSave"
         android:layout_width="match_parent"
@@ -51,11 +45,10 @@
         android:layout_weight="0.02"
         android:text="Save" />
 
-    <Button
-        android:id="@+id/sampleDelete"
+    <ListView
+        android:id="@+id/listview_Sample"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_weight="0.02"
-        android:text="Delete" />
+        android:layout_height="300dp"
+        android:layout_weight="0.43" />
 
 </LinearLayout>

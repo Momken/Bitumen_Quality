@@ -34,13 +34,6 @@
         android:layout_weight="0.02"
         android:text="Save" />
 
-    <Button
-        android:id="@+id/SorteDelete"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_weight="0.02"
-        android:text="Delete" />
-
     <ListView
         android:id="@+id/listview_Sorte"
         android:layout_width="match_parent"

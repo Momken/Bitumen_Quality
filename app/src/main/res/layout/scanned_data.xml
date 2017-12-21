@@ -33,28 +33,28 @@
                 android:layout_column="0"
                 android:layout_row="0"
                 android:orientation="vertical">
+                <!--
+                                <EditText
+                                    android:id="@+id/editText_BitumenSorte"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="match_parent"
+                                    android:inputType="text"
+                                    android:text="Sorte" />
 
-                <EditText
-                    android:id="@+id/editText_BitumenSorte"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:inputType="text"
-                    android:text="Sorte" />
+                                <EditText
+                                    android:id="@+id/editText_BitumenNote"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:layout_weight="8"
+                                    android:inputType="text"
+                                    android:text="Name" />
 
-                <EditText
-                    android:id="@+id/editText_BitumenNote"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="8"
-                    android:inputType="text"
-                    android:text="Name" />
-
-                <Button
-                    android:id="@+id/BitumenScannDelete"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="Delete" />
-
+                                <Button
+                                    android:id="@+id/BitumenScannDelete"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:text="Delete" />
+                                -->
                 <ListView
                     android:id="@+id/listview_Bitumen_memos"
                     android:layout_width="match_parent"

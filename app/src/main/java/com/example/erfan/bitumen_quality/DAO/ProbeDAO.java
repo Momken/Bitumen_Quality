@@ -71,6 +71,17 @@ public class ProbeDAO {
         return temp;
     }
 
+
+    public void deleteProbe(Probe temp) {
+        long id = temp.getId();
+
+        database.delete(BitumenDBHelper.TABLE_Probe_LIST,
+                BitumenDBHelper.Probe_ID + "=" + id,
+                null);
+
+        Log.d(LOG_TAG, "Eintrag gelöscht! ID: " + id + " Inhalt: " + temp.toString());
+    }
+
     private Probe cursorToProbe(Cursor cursor) {
 
         int idProbe = cursor.getColumnIndex(BitumenDBHelper.Probe_ID);

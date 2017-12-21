@@ -22,7 +22,7 @@
         </activity>
         <activity
             android:name=".BitumenDatenbankActivity"
-            android:label="@string/title_activity_bitumen_datenban"
+            android:label="@string/title_activity_bitumen_datenbank"
             android:theme="@style/AppTheme.NoActionBar"></activity>
     </application>
 

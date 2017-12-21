@@ -47,18 +47,6 @@
                     app:layout_constraintRight_toRightOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
 
-                <Spinner
-                    android:id="@+id/lieferungSorteSpinner"
-                    android:layout_width="match_parent"
-                    android:layout_height="40dp"
-                    android:layout_marginLeft="8dp"
-                    android:layout_marginRight="8dp"
-                    android:layout_marginTop="8dp"
-                    android:entries="@array/Bitumensorten"
-                    app:layout_constraintLeft_toLeftOf="parent"
-                    app:layout_constraintRight_toRightOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
-
                 <EditText
                     android:id="@+id/DateLieferung"
                     android:layout_width="match_parent"
@@ -89,12 +77,6 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="Save" />
-
-                <Button
-                    android:id="@+id/deliverdFaktoryDelete"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="Delete" />
 
                 <ListView
                     android:id="@+id/listview_FaktorySampel"

@@ -69,6 +69,17 @@ public class HerstellerDAO {
         return hersteller;
     }
 
+
+    public void deleteHersteller(Hersteller temp) {
+        long id = temp.getId();
+
+        database.delete(BitumenDBHelper.TABLE_Hersteller_LIST,
+                BitumenDBHelper.Hersteller_ID + "=" + id,
+                null);
+
+        Log.d(LOG_TAG, "Eintrag gelöscht! ID: " + id + " Inhalt: " + temp.toString());
+    }
+
     private Hersteller cursorToHersteller(Cursor cursor) {
 
 

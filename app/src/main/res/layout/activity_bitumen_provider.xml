@@ -15,9 +15,22 @@
     <MultiAutoCompleteTextView
         android:id="@+id/providerInfo"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="200dp"
         android:layout_weight="0.22"
         android:text="Beschreibung" />
+
+    <Spinner
+        android:id="@+id/spinnerHerstellerSorte"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_weight="0.02"
+        android:entries="@array/Bitumensorten"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <Button
         android:id="@+id/ProviderSave"
@@ -26,17 +39,9 @@
         android:layout_weight="0.02"
         android:text="Save" />
 
-    <Button
-        android:id="@+id/button3"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_weight="0.02"
-        android:text="Button" />
-
     <ListView
         android:id="@+id/listview_Provider"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_weight="0.02" />
+        android:layout_height="678dp" />
 
 </LinearLayout>

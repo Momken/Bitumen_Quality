@@ -6,11 +6,12 @@
     <string name="editText_Bitumen_Sort">Sorte11111</string>
     <string name="editText_Bitumen_Note">Note</string>
     <string name="butteon_add">+</string>
+    <string name="cab_delete">Delete</string>
 
     //Exeption
     <string name="output_HelloWorld">Hello world!</string>
     <string name="output_errorMessage">No empty Value</string>
-    <string name="title_activity_bitumen_datenban">BitumenDatenbanActivity</string>
+    <string name="title_activity_bitumen_datenbank">BitumenDatenbankActivity</string>
     <string name="section_format">Hello World from section: %1$d</string>
 
     <string-array name="Bitumensorten">

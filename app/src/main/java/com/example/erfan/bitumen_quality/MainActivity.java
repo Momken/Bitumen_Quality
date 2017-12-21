@@ -11,6 +11,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.webkit.WebView;
+import android.widget.AbsListView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
@@ -51,6 +52,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+
+import android.util.SparseBooleanArray;
+import android.view.ActionMode;
 
 
 /**
@@ -187,8 +192,125 @@ public class MainActivity extends AppCompatActivity  implements Runnable{
         activateAddButton();
         showAllListEntriesSampel();
         showAllListEntriesAlterung();
-
+        initializeContextualActionBarAlterung();
+        initializeContextualActionBarProbe();
     }
+
+
+    private void initializeContextualActionBarAlterung() {
+
+        final ListView listView = (ListView) findViewById(R.id.listview_Bitumen_memos);
+        listView.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE_MODAL);
+
+        listView.setMultiChoiceModeListener(new AbsListView.MultiChoiceModeListener() {
+
+            @Override
+            public void onItemCheckedStateChanged(ActionMode mode, int position, long id, boolean checked) {
+
+            }
+
+            @Override
+            public boolean onCreateActionMode(ActionMode mode, Menu menu) {
+                getMenuInflater().inflate(R.menu.menu_contextual_action_bar, menu);
+                return true;
+            }
+
+            @Override
+            public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
+                return false;
+            }
+
+            @Override
+            public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
+                switch (item.getItemId()) {
+
+                    case R.id.cab_delete:
+                        SparseBooleanArray touchedShoppingMemosPositions = listView.getCheckedItemPositions();
+                        for (int i=0; i < touchedShoppingMemosPositions.size(); i++) {
+                            boolean isChecked = touchedShoppingMemosPositions.valueAt(i);
+                            if(isChecked) {
+                                int postitionInListView = touchedShoppingMemosPositions.keyAt(i);
+                                HashMap<Integer, Object> temp = (HashMap<Integer, Object>) listView.getItemAtPosition(postitionInListView);
+                                Log.d(LOG_TAG, "Position im ListView: " + postitionInListView + " Inhalt: " + temp.toString()+ temp.size());
+                                dataAlterungszustand.open();
+                                dataAlterungszustand.deleteAlterungszustand(dataAlterungszustand.getAllAlterungzustand().get(postitionInListView));
+                                dataAlterungszustand.close();
+
+                            }
+                        }
+                        showAllListEntries();
+                        mode.finish();
+                        return true;
+
+                    default:
+                        return false;
+                }
+            }
+
+            @Override
+            public void onDestroyActionMode(ActionMode mode) {
+
+            }
+        });
+    }
+
+    private void initializeContextualActionBarProbe() {
+
+        final ListView listView = (ListView) findViewById(R.id.listview_Sample);
+        listView.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE_MODAL);
+
+        listView.setMultiChoiceModeListener(new AbsListView.MultiChoiceModeListener() {
+
+            @Override
+            public void onItemCheckedStateChanged(ActionMode mode, int position, long id, boolean checked) {
+
+            }
+
+            @Override
+            public boolean onCreateActionMode(ActionMode mode, Menu menu) {
+                getMenuInflater().inflate(R.menu.menu_contextual_action_bar, menu);
+                return true;
+            }
+
+            @Override
+            public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
+                return false;
+            }
+
+            @Override
+            public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
+                switch (item.getItemId()) {
+
+                    case R.id.cab_delete:
+                        SparseBooleanArray touchedShoppingMemosPositions = listView.getCheckedItemPositions();
+                        for (int i=0; i < touchedShoppingMemosPositions.size(); i++) {
+                            boolean isChecked = touchedShoppingMemosPositions.valueAt(i);
+                            if(isChecked) {
+                                int postitionInListView = touchedShoppingMemosPositions.keyAt(i);
+                                HashMap<Integer, Object> temp = (HashMap<Integer, Object>) listView.getItemAtPosition(postitionInListView);
+                                Log.d(LOG_TAG, "Position im ListView: " + postitionInListView + " Inhalt: " + temp.toString()+ temp.size());
+                                dataProbe.open();
+                                dataProbe.deleteProbe(dataProbe.getAllProbe().get(postitionInListView));
+                                dataProbe.close();
+
+                            }
+                        }
+                        showAllListEntries();
+                        mode.finish();
+                        return true;
+
+                    default:
+                        return false;
+                }
+            }
+
+            @Override
+            public void onDestroyActionMode(ActionMode mode) {
+
+            }
+        });
+    }
+
 
     private void makeSpinner() {
 
@@ -265,29 +387,39 @@ public class MainActivity extends AppCompatActivity  implements Runnable{
         dataProbe.open();
         List<Probe> memoList = dataProbe.getAllProbe();
 
-        ArrayAdapter<Probe> shoppingMemoArrayAdapter = new ArrayAdapter<> (
-                this,
-                android.R.layout.simple_list_item_multiple_choice,
-                memoList);
+        ArrayList<HashMap<String, String>> mylist = new ArrayList<HashMap<String, String>>();
+        dataLieferung.open();
+        List<Lieferung> list =  dataLieferung.getAllLieferung();
+        dataLieferung.close();
+        String lieferungName="";
+        for (int i = 0 ; i < memoList.size(); i++){
+            HashMap<String, String> map = new HashMap<String, String>();
+            Probe probe = memoList.get(i);
 
-        ListView memosListView = (ListView) findViewById(R.id.listview_Sample);
-        memosListView.setAdapter(shoppingMemoArrayAdapter);
+            for (int j =  0 ; j < list.size(); j++){
+                if(list.get(j).getId() == probe.getLieferungId()){
+                    lieferungName = list.get(j).getBezeichnung();
+                    break;
+                }
+            }
+            map.put("FIRST_COLUMN",  lieferungName );
+            map.put("SECOND_COLUMN"," "+ probe.getBezeichnung() );
+            map.put("THIRD_COLUMN"," "+ probe.getDate() );
+            map.put("FOURTH_COLUMN"," "+ probe.getBeschreibung());
+            mylist.add(map);
+        }
+
+        Log.d(LOG_TAG," count mylist: : "+mylist.size());
+        //TODO make an base adapter
+
+        ListView memosListView =  (ListView) findViewById(R.id.listview_Sample);
+        ListViewAdapter adapter= new ListViewAdapter(this, mylist);
+        memosListView.setAdapter(adapter);
+
         dataProbe.close();
     }
 
-    private void showAllListEntriesAlterung2 () {
-        dataAlterungszustand.open();
-        List<Alterungszustand> memoList = dataAlterungszustand.getAllAlterungzustand();
 
-        ArrayAdapter<Alterungszustand> shoppingMemoArrayAdapter = new ArrayAdapter<> (
-                this,
-                android.R.layout.simple_list_item_multiple_choice,
-                memoList);
-
-        ListView memosListView = (ListView) findViewById(R.id.listview_Bitumen_memos);
-        memosListView.setAdapter(shoppingMemoArrayAdapter);
-        dataAlterungszustand.close();
-    }
     private void showAllListEntriesAlterung () {
         dataAlterungszustand.open();
         List<Alterungszustand> memoList = dataAlterungszustand.getAllAlterungzustand();
@@ -297,35 +429,18 @@ public class MainActivity extends AppCompatActivity  implements Runnable{
         for (int i = 0 ; i < memoList.size(); i++){
             HashMap<String, String> map = new HashMap<String, String>();
             Alterungszustand alterungszustand = memoList.get(i);
-            map.put("FIRST_COLUMN",alterungszustand.getProbenId()+ " "+alterungszustand.getBezeichnung());
-            map.put("SECOND_COLUMN",alterungszustand.getDate());
-            map.put("THIRD_COLUMN",alterungszustand.getMessungsfaktoren());
-            map.put("FOURTH_COLUMN",alterungszustand.getMessung());
+            map.put("FIRST_COLUMN",alterungszustand.getProbenId()+ "\t"+alterungszustand.getBezeichnung());
+            map.put("SECOND_COLUMN"," "+alterungszustand.getDate());
+            map.put("THIRD_COLUMN"," "+alterungszustand.getMessungsfaktoren());
+            map.put("FOURTH_COLUMN"," "+alterungszustand.getMessung());
             mylist.add(map);
         }
         Log.d(LOG_TAG," count mylist: : "+mylist.size());
-/*
-        ArrayList<HashMap<String, String>> mylist = new ArrayList<HashMap<String, String>>();
-        HashMap<String, String> map = new HashMap<String, String>();
-        map.put("FIRST_COLUMN","a");
-        map.put("SECOND_COLUMN","b");
-        map.put("THIRD_COLUMN","c");
-        map.put("FOURTH_COLUMN","d");
-        mylist.add(map);
-
-*/
         //TODO make an base adapter
         ListView memosListView =  (ListView) findViewById(R.id.listview_Bitumen_memos);
-        ListViewAdapter adapter=new ListViewAdapter(this, mylist);
-        Log.d(LOG_TAG,"Adapter count: "+adapter.getCount());
+        ListViewAdapter adapter= new ListViewAdapter(this, mylist);
         memosListView.setAdapter(adapter);
-        Log.d(LOG_TAG,"count listview: "+memosListView.getCount());
         dataAlterungszustand.close();
-
-
-
-
-
 
     }
 
@@ -455,7 +570,7 @@ public class MainActivity extends AppCompatActivity  implements Runnable{
 
                 dataAlterungszustand.open();
                 dataAlterungszustand.createAlterungszustand
-                        (0, new java.util.Date(), internID+":"+name+":"+info, ed_messungsfaktoren.getText().toString(), ed_messung1.getText().toString() + " " + ed_messung2.getText().toString()  );
+                        (0, new java.util.Date(), internID+" "+name+" "+info, ed_messungsfaktoren.getText().toString(), ed_messung1.getText().toString() + " " + ed_messung2.getText().toString()  );
                 dataAlterungszustand.close();
 
 
@@ -713,13 +828,13 @@ public class MainActivity extends AppCompatActivity  implements Runnable{
         Log.d("MainActivity", "i got an USB connected");
         usbDevice = usbManager.getDeviceList().values().iterator().next();
         //Log.d("MainActivity", usbDevice.toString());
-        runOnUiThread(new Runnable() {
+   /*     runOnUiThread(new Runnable() {
             @Override
             public void run() {
                 TextView info = (TextView) findViewById(R.id.Result);
                 info.setText("Connected");
             }
-        });
+        });*/
 
         // user must approve of connection if not in the /res/usb_device_filter.xml file
         usbManager.requestPermission(usbDevice, permissionIntent);
@@ -983,6 +1098,7 @@ public class MainActivity extends AppCompatActivity  implements Runnable{
                                         resultQ2.setText("");
                                         result.setTextColor(Color.RED);   // rot!
                                     }else {
+                                        result.setTextColor(Color.BLACK);
                                         resultQ1.setText("Scanning...");
                                         resultQ2.setText("Scanning...");
                                     }
