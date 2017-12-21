@@ -15,6 +15,7 @@ public class Alterungszustand {
     private String messungsfaktoren;
     private String messung;
 
+
     public Alterungszustand(long id, long probenId, String date, String bezeichnung, String messungsfaktoren, String messung) {
         this.id = id;
         this.probenId = probenId;

@@ -6,6 +6,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 
+import com.example.erfan.bitumen_quality.BitumenDatenbankActivity;
 import com.example.erfan.bitumen_quality.DB.Alterungszustand;
 import com.example.erfan.bitumen_quality.DB.BitumenDBHelper;
 
@@ -32,8 +33,7 @@ public class AlterungszustandDAO {
             BitumenDBHelper.Alterungszustand_Datum,
             BitumenDBHelper.Alterungszustand_Bezeichnung,
             BitumenDBHelper.Alterungszustand_Messungsfaktoren,
-            BitumenDBHelper.Alterungszustand_messung
-
+            BitumenDBHelper.Alterungszustand_messung,
     };
 
 
@@ -101,10 +101,10 @@ public class AlterungszustandDAO {
         int idMessungsFakt = cursor.getColumnIndex(BitumenDBHelper.Alterungszustand_Messungsfaktoren);
         int idMessung = cursor.getColumnIndex(BitumenDBHelper.Alterungszustand_messung);
 
-
         String messung = cursor.getString(idMessung);
         String messungsFakt = cursor.getString(idMessungsFakt);
         String bezeichnung = cursor.getString(idBezeichnung);
+
 
         //Todo check for the seystem
 

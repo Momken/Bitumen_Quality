@@ -37,13 +37,11 @@ public class BitumenDAO {
         dbHelper = new BitumenDBHelper(context);
     }
 
-
     public void open() {
         Log.d(LOG_TAG, "Eine Referenz auf die Datenbank wird jetzt angefragt.");
         database = dbHelper.getWritableDatabase();
         Log.d(LOG_TAG, "Datenbank-Referenz erhalten. Pfad zur Datenbank: " + database.getPath());
     }
-
 
     public void close() {
         dbHelper.close();
@@ -57,8 +55,6 @@ public class BitumenDAO {
         values.put(BitumenDBHelper.COLUMN_Note, note);
         long insertId = database.insert(BitumenDBHelper.TABLE_Bitumen_LIST, null, values);
 
-
-        Log.d(LOG_TAG,"insertID="+insertId);
         Cursor cursor = database.query(BitumenDBHelper.TABLE_Bitumen_LIST,
                 columns, BitumenDBHelper.COLUMN_ID + "=" + insertId,
                 null, null, null, null);

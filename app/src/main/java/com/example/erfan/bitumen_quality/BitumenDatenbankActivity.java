@@ -537,7 +537,7 @@ public class BitumenDatenbankActivity extends AppCompatActivity {
                 HashMap<String, String> map = new HashMap<String, String>();
                 Lieferung lieferung = memoList.get(i);
 
-                for (int j =  0 ; j < list.size(); j++){
+                for (int j =  0 ; j < list.size()-1; j++){
                     if(list.get(j).getId() == lieferung.getHerstllerId()){
                         herstellerName = list.get(j).getName();
                         break;

@@ -419,7 +419,36 @@ public class MainActivity extends AppCompatActivity  implements Runnable{
         dataProbe.close();
     }
 
+    private void showAllListEntriesSampel2 () {
 
+        dataProbe.open();
+        List<Probe> memoList = dataProbe.getAllProbe();
+
+        ArrayAdapter<Probe> shoppingMemoArrayAdapter = new ArrayAdapter<> (
+                this,
+                android.R.layout.simple_list_item_multiple_choice,
+                memoList);
+
+        ListView memosListView = (ListView) findViewById(R.id.listview_Sample);
+        memosListView.setAdapter(shoppingMemoArrayAdapter);
+        dataProbe.close();
+    }
+
+
+
+    private void showAllListEntriesAlterung2 () {
+        dataAlterungszustand.open();
+        List<Alterungszustand> memoList = dataAlterungszustand.getAllAlterungzustand();
+
+        ArrayAdapter<Alterungszustand> shoppingMemoArrayAdapter = new ArrayAdapter<> (
+                this,
+                android.R.layout.simple_list_item_multiple_choice,
+                memoList);
+
+        ListView memosListView = (ListView) findViewById(R.id.listview_Bitumen_memos);
+        memosListView.setAdapter(shoppingMemoArrayAdapter);
+        dataAlterungszustand.close();
+    }
     private void showAllListEntriesAlterung () {
         dataAlterungszustand.open();
         List<Alterungszustand> memoList = dataAlterungszustand.getAllAlterungzustand();
@@ -436,6 +465,16 @@ public class MainActivity extends AppCompatActivity  implements Runnable{
             mylist.add(map);
         }
         Log.d(LOG_TAG," count mylist: : "+mylist.size());
+/*
+        ArrayList<HashMap<String, String>> mylist = new ArrayList<HashMap<String, String>>();
+        HashMap<String, String> map = new HashMap<String, String>();
+        map.put("FIRST_COLUMN","a");
+        map.put("SECOND_COLUMN","b");
+        map.put("THIRD_COLUMN","c");
+        map.put("FOURTH_COLUMN","d");
+        mylist.add(map);
+
+*/
         //TODO make an base adapter
         ListView memosListView =  (ListView) findViewById(R.id.listview_Bitumen_memos);
         ListViewAdapter adapter= new ListViewAdapter(this, mylist);
@@ -570,7 +609,8 @@ public class MainActivity extends AppCompatActivity  implements Runnable{
 
                 dataAlterungszustand.open();
                 dataAlterungszustand.createAlterungszustand
-                        (0, new java.util.Date(), internID+" "+name+" "+info, ed_messungsfaktoren.getText().toString(), ed_messung1.getText().toString() + " " + ed_messung2.getText().toString()  );
+                        (0, new java.util.Date(), internID+" "+name+" "+info, ed_messungsfaktoren.getText().toString(), ed_messung1.getText().toString()
+                                + " " + ed_messung2.getText().toString()  );
                 dataAlterungszustand.close();
 
 
