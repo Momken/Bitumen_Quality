@@ -563,7 +563,7 @@ public class BitumenDatenbankActivity extends AppCompatActivity {
         private void activateAddButton(final View rootview) {
 
             /*
-                Delivery Save
+            Delivery Save
              */
 
             Button buttonAddDelivery = (Button) rootview.findViewById(R.id.deliverdFaktorySave);
@@ -582,6 +582,7 @@ public class BitumenDatenbankActivity extends AppCompatActivity {
                     String name = editTextName.getText().toString();
                     String date = editTextDate.getText().toString();
                     String lieferungHersteller = editTextLHersteller.getSelectedItem().toString();
+                    String[] segs = lieferungHersteller.split("(\\s|\\p{Punct})+");
 
 
                     if(TextUtils.isEmpty(info)) {
@@ -604,9 +605,11 @@ public class BitumenDatenbankActivity extends AppCompatActivity {
                     dataHersteller.open();
                     dataLieferung.open();
 
-                    Long id = dataHersteller.getAllHersteller(lieferungHersteller).get(0).getId();
+                    Long id = dataHersteller.getAllHersteller(segs[0]).get(0).getId();
                     Date dTemp = Date.valueOf(date);
-                    dataLieferung.createLieferung(id, dTemp, name, info);
+
+Log.d("MainActivity", "onClick: date:"+ dTemp.toString());
+                    dataLieferung.createLieferung(id, dTemp, name, segs[1]+" "+info);
                     dataLieferung.close();
                     dataHersteller.close();
 
@@ -617,9 +620,14 @@ public class BitumenDatenbankActivity extends AppCompatActivity {
                     }
 
                     showAllListEntries(rootview);
-                    //makeSpinner(rootview);
+                    makeSpinner(rootview);
                 }
             });
+
+            /*
+
+                    Provider save
+             */
 
 
             Button buttonAddProvider = (Button) rootview.findViewById(R.id.ProviderSave);
@@ -639,11 +647,11 @@ public class BitumenDatenbankActivity extends AppCompatActivity {
 
 
                     if(TextUtils.isEmpty(info)) {
-                        editTextInfo.setError(getString(R.string.output_errorMessage));
+                        editTextPInfo.setError(getString(R.string.output_errorMessage));
                         return;
                     }
                     if(TextUtils.isEmpty(name)) {
-                        editTextName.setError(getString(R.string.output_errorMessage));
+                        editTextPName.setError(getString(R.string.output_errorMessage));
                         return;
                     }
                     if(TextUtils.isEmpty(herstellerSorte)) {
@@ -652,11 +660,10 @@ public class BitumenDatenbankActivity extends AppCompatActivity {
                     }
 
                     dataSource6.open();
-                    dataHersteller.open();
-
                     Long id = dataSource6.getAllSorte(herstellerSorte).get(0).getId();
-                    dataHersteller.createHersteller(id, name, info);
                     dataSource6.close();
+                    dataHersteller.open();
+                    dataHersteller.createHersteller(id, name, info);
                     dataHersteller.close();
 
                     InputMethodManager inputMethodManager;
@@ -666,21 +673,22 @@ public class BitumenDatenbankActivity extends AppCompatActivity {
                     }
 
                     showAllListEntries(rootview);
+                    makeSpinner(rootview);
                 }
             });
 
 
-            Button buttonAddSort = (Button) rootview.findViewById(R.id.sampleSave);
-            final EditText editTextSInfo = (EditText) rootview.findViewById(R.id.sampleInfo);
-            final EditText editTextSName = (EditText) rootview.findViewById(R.id.sampleName);
+            Button buttonAddSort = (Button) rootview.findViewById(R.id.SorteSave);
+            final EditText editTextSInfo = (EditText) rootview.findViewById(R.id.sorteBeschreibung);
+            final EditText editTextSName = (EditText) rootview.findViewById(R.id.sorteAlgemeineBezeichnung);
 
 
-            buttonAddProvider.setOnClickListener(new View.OnClickListener() {
+            buttonAddSort.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
 
-                    String info = editTextPInfo.getText().toString();
-                    String name = editTextPName.getText().toString();
+                    String info = editTextSInfo.getText().toString();
+                    String name = editTextSName.getText().toString();
 
 
                     if(TextUtils.isEmpty(info)) {
@@ -704,6 +712,7 @@ public class BitumenDatenbankActivity extends AppCompatActivity {
                     }
 
                     showAllListEntries(rootview);
+                    makeSpinner(rootview);
                 }
             });
 

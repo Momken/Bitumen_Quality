@@ -54,7 +54,7 @@
                     android:ems="10"
                     android:inputType="date"
                     android:singleLine="false"
-                    android:text="Date" />
+                    android:text="YYYY-MM-DD" />
 
                 <EditText
                     android:id="@+id/BezeichnungLieferung"

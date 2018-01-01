@@ -197,6 +197,9 @@ public class MainActivity extends AppCompatActivity  implements Runnable{
     }
 
 
+
+
+
     private void initializeContextualActionBarAlterung() {
 
         final ListView listView = (ListView) findViewById(R.id.listview_Bitumen_memos);
@@ -455,6 +458,7 @@ public class MainActivity extends AppCompatActivity  implements Runnable{
 
         Log.d(LOG_TAG, "Folgende Einträge sind in der Datenbank vorhanden:");
         showAllListEntries();
+        makeSpinner();
     }
 
     @Override
@@ -570,7 +574,8 @@ public class MainActivity extends AppCompatActivity  implements Runnable{
 
                 dataAlterungszustand.open();
                 dataAlterungszustand.createAlterungszustand
-                        (0, new java.util.Date(), internID+" "+name+" "+info, ed_messungsfaktoren.getText().toString(), ed_messung1.getText().toString() + " " + ed_messung2.getText().toString()  );
+                        (0, new java.util.Date(), internID+" "+name+" "+info, ed_messungsfaktoren.getText().toString(),
+                                ed_messung1.getText().toString() + " " + ed_messung2.getText().toString()  );
                 dataAlterungszustand.close();
 
 
