@@ -1,8 +1,16 @@
 package com.example.erfan.bitumen_quality;
 
+import android.Manifest;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Color;
+import android.location.Criteria;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.os.Bundle;
+import android.os.Looper;
+import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.util.Log;
@@ -62,15 +70,20 @@ import android.view.ActionMode;
  * Created by Erfan on 30.06.2017.
  */
 
-public class MainActivity extends AppCompatActivity  implements Runnable{
+public class MainActivity extends AppCompatActivity implements Runnable {
 
     public static final String LOG_TAG = MainActivity.class.getSimpleName();
 
     private BitumenDAO dataSource;
     private SorteDAO dataSorte = new SorteDAO(this);
     private LieferungDAO dataLieferung = new LieferungDAO(this);
-    private ProbeDAO dataProbe =  new ProbeDAO(this);;
+    private ProbeDAO dataProbe = new ProbeDAO(this);
+    ;
     private AlterungszustandDAO dataAlterungszustand = new AlterungszustandDAO(this);
+    private String longitude;
+    private String latitude;
+
+
     UsbCommunicationManager usb = null;
     private WebView webView;
     RatingBar rateBitumen;
@@ -98,11 +111,12 @@ public class MainActivity extends AppCompatActivity  implements Runnable{
 
     byte[] readBytes = new byte[256];
 
-
+    Location mlocation;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         /*********GUI 1
          * main_measure
          */
@@ -112,17 +126,15 @@ public class MainActivity extends AppCompatActivity  implements Runnable{
          */
 
 
-
         setContentView(R.layout.content_measure_lab);
 
-        Bitumen testBitumen = new Bitumen(1,"70/100","schlecht");
-
+        Bitumen testBitumen = new Bitumen(1, "70/100", "schlecht");
 
 
         dataSource = new BitumenDAO(this);
 
         dataSource.open();
-       // showAllListEntriesBitumen();
+        // showAllListEntriesBitumen();
 
 
         //Bitumen shoppingMemo = dataSource.createBitumen("Testprodukt", 2);
@@ -149,21 +161,14 @@ public class MainActivity extends AppCompatActivity  implements Runnable{
         */
 
 
-
         Log.d(LOG_TAG, "Die Datenquelle wird geschlossen.");
         dataSource.close();
-
-
-
-
-
 
 
         Log.d(LOG_TAG, "onCreate: Create USB");
 
         usbCommunicationManager(this);
         String usbStatus = connect();
-
 
 
         /*********GUI 1
@@ -179,10 +184,7 @@ public class MainActivity extends AppCompatActivity  implements Runnable{
         makeTheTabs();
 
 
-
         setupSettings_Bitumen();
-
-
 
 
         makeSpinner();
@@ -194,10 +196,9 @@ public class MainActivity extends AppCompatActivity  implements Runnable{
         showAllListEntriesAlterung();
         initializeContextualActionBarAlterung();
         initializeContextualActionBarProbe();
+
+
     }
-
-
-
 
 
     private void initializeContextualActionBarAlterung() {
@@ -229,12 +230,12 @@ public class MainActivity extends AppCompatActivity  implements Runnable{
 
                     case R.id.cab_delete:
                         SparseBooleanArray touchedShoppingMemosPositions = listView.getCheckedItemPositions();
-                        for (int i=0; i < touchedShoppingMemosPositions.size(); i++) {
+                        for (int i = 0; i < touchedShoppingMemosPositions.size(); i++) {
                             boolean isChecked = touchedShoppingMemosPositions.valueAt(i);
-                            if(isChecked) {
+                            if (isChecked) {
                                 int postitionInListView = touchedShoppingMemosPositions.keyAt(i);
                                 HashMap<Integer, Object> temp = (HashMap<Integer, Object>) listView.getItemAtPosition(postitionInListView);
-                                Log.d(LOG_TAG, "Position im ListView: " + postitionInListView + " Inhalt: " + temp.toString()+ temp.size());
+                                Log.d(LOG_TAG, "Position im ListView: " + postitionInListView + " Inhalt: " + temp.toString() + temp.size());
                                 dataAlterungszustand.open();
                                 dataAlterungszustand.deleteAlterungszustand(dataAlterungszustand.getAllAlterungzustand().get(postitionInListView));
                                 dataAlterungszustand.close();
@@ -286,12 +287,12 @@ public class MainActivity extends AppCompatActivity  implements Runnable{
 
                     case R.id.cab_delete:
                         SparseBooleanArray touchedShoppingMemosPositions = listView.getCheckedItemPositions();
-                        for (int i=0; i < touchedShoppingMemosPositions.size(); i++) {
+                        for (int i = 0; i < touchedShoppingMemosPositions.size(); i++) {
                             boolean isChecked = touchedShoppingMemosPositions.valueAt(i);
-                            if(isChecked) {
+                            if (isChecked) {
                                 int postitionInListView = touchedShoppingMemosPositions.keyAt(i);
                                 HashMap<Integer, Object> temp = (HashMap<Integer, Object>) listView.getItemAtPosition(postitionInListView);
-                                Log.d(LOG_TAG, "Position im ListView: " + postitionInListView + " Inhalt: " + temp.toString()+ temp.size());
+                                Log.d(LOG_TAG, "Position im ListView: " + postitionInListView + " Inhalt: " + temp.toString() + temp.size());
                                 dataProbe.open();
                                 dataProbe.deleteProbe(dataProbe.getAllProbe().get(postitionInListView));
                                 dataProbe.close();
@@ -331,7 +332,6 @@ public class MainActivity extends AppCompatActivity  implements Runnable{
         My_spinner_Sample.setAdapter(my_Adapter_Sample);
 
 
-
     }
 
     private void makeBitumenrate() {
@@ -344,23 +344,23 @@ public class MainActivity extends AppCompatActivity  implements Runnable{
             public void onRatingChanged(RatingBar ratingBar, float rating, boolean fromUser) {
                 userRating = rateBitumen.getRating();
 
-                if(userRating == 0){
+                if (userRating == 0) {
                     ratingBar.setRating(1);
                 }
-                if(userRating == 1){
+                if (userRating == 1) {
                     bitumenRateText.setText("Sehr schlecht (1 Stern)");
                 }
-                if(userRating == 2){
+                if (userRating == 2) {
                     bitumenRateText.setText("Schlecht (2 Stern)");
                 }
 
-                if(userRating == 3){
+                if (userRating == 3) {
                     bitumenRateText.setText("Genügend (3 Stern)");
                 }
-                if(userRating == 4){
+                if (userRating == 4) {
                     bitumenRateText.setText("Gut (4 Stern)");
                 }
-                if(userRating == 5){
+                if (userRating == 5) {
                     bitumenRateText.setText("Sehr Gut (5 Stern)");
                 }
 
@@ -368,15 +368,15 @@ public class MainActivity extends AppCompatActivity  implements Runnable{
         });
     }
 
-    private void showAllListEntries(){
+    private void showAllListEntries() {
         showAllListEntriesSampel();
         showAllListEntriesAlterung();
     }
 
-    private void showAllListEntriesBitumen () {
+    private void showAllListEntriesBitumen() {
         List<Bitumen> shoppingMemoList = dataSource.getAllBitumens();
 
-        ArrayAdapter<Bitumen> shoppingMemoArrayAdapter = new ArrayAdapter<> (
+        ArrayAdapter<Bitumen> shoppingMemoArrayAdapter = new ArrayAdapter<>(
                 this,
                 android.R.layout.simple_list_item_multiple_choice,
                 shoppingMemoList);
@@ -385,68 +385,67 @@ public class MainActivity extends AppCompatActivity  implements Runnable{
         shoppingMemosListView.setAdapter(shoppingMemoArrayAdapter);
     }
 
-    private void showAllListEntriesSampel () {
+    private void showAllListEntriesSampel() {
 
         dataProbe.open();
         List<Probe> memoList = dataProbe.getAllProbe();
 
         ArrayList<HashMap<String, String>> mylist = new ArrayList<HashMap<String, String>>();
         dataLieferung.open();
-        List<Lieferung> list =  dataLieferung.getAllLieferung();
+        List<Lieferung> list = dataLieferung.getAllLieferung();
         dataLieferung.close();
-        String lieferungName="";
-        for (int i = 0 ; i < memoList.size(); i++){
+        String lieferungName = "";
+        for (int i = 0; i < memoList.size(); i++) {
             HashMap<String, String> map = new HashMap<String, String>();
             Probe probe = memoList.get(i);
 
-            for (int j =  0 ; j < list.size(); j++){
-                if(list.get(j).getId() == probe.getLieferungId()){
+            for (int j = 0; j < list.size(); j++) {
+                if (list.get(j).getId() == probe.getLieferungId()) {
                     lieferungName = list.get(j).getBezeichnung();
                     break;
                 }
             }
-            map.put("FIRST_COLUMN",  lieferungName );
-            map.put("SECOND_COLUMN"," "+ probe.getBezeichnung() );
-            map.put("THIRD_COLUMN"," "+ probe.getDate() );
-            map.put("FOURTH_COLUMN"," "+ probe.getBeschreibung());
+            map.put("FIRST_COLUMN", lieferungName);
+            map.put("SECOND_COLUMN", " " + probe.getBezeichnung());
+            map.put("THIRD_COLUMN", " " + probe.getDate());
+            map.put("FOURTH_COLUMN", " " + probe.getBeschreibung());
             mylist.add(map);
         }
 
-        Log.d(LOG_TAG," count mylist: : "+mylist.size());
+        Log.d(LOG_TAG, " count mylist: : " + mylist.size());
         //TODO make an base adapter
 
-        ListView memosListView =  (ListView) findViewById(R.id.listview_Sample);
-        ListViewAdapter adapter= new ListViewAdapter(this, mylist);
+        ListView memosListView = (ListView) findViewById(R.id.listview_Sample);
+        ListViewAdapter adapter = new ListViewAdapter(this, mylist);
         memosListView.setAdapter(adapter);
 
         dataProbe.close();
     }
 
 
-    private void showAllListEntriesAlterung () {
+    private void showAllListEntriesAlterung() {
         dataAlterungszustand.open();
         List<Alterungszustand> memoList = dataAlterungszustand.getAllAlterungzustand();
 
         ArrayList<HashMap<String, String>> mylist = new ArrayList<HashMap<String, String>>();
 
-        for (int i = 0 ; i < memoList.size(); i++){
+        for (int i = 0; i < memoList.size(); i++) {
             HashMap<String, String> map = new HashMap<String, String>();
             Alterungszustand alterungszustand = memoList.get(i);
-            map.put("FIRST_COLUMN",alterungszustand.getProbenId()+ "\t"+alterungszustand.getBezeichnung());
-            map.put("SECOND_COLUMN"," "+alterungszustand.getDate());
-            map.put("THIRD_COLUMN"," "+alterungszustand.getMessungsfaktoren());
-            map.put("FOURTH_COLUMN"," "+alterungszustand.getMessung());
+            map.put("FIRST_COLUMN", alterungszustand.getProbenId() + "\t" + alterungszustand.getBezeichnung());
+            map.put("SECOND_COLUMN", " " + alterungszustand.getDate());
+            map.put("THIRD_COLUMN", " " + alterungszustand.getMessungsfaktoren());
+            map.put("FOURTH_COLUMN", " " + alterungszustand.getMessung());
             mylist.add(map);
         }
-        Log.d(LOG_TAG," count mylist: : "+mylist.size());
+        Log.d(LOG_TAG, " count mylist: : " + mylist.size());
         //TODO make an base adapter
-        ListView memosListView =  (ListView) findViewById(R.id.listview_Bitumen_memos);
-        ListViewAdapter adapter= new ListViewAdapter(this, mylist);
+        ListView memosListView = (ListView) findViewById(R.id.listview_Bitumen_memos);
+        ListViewAdapter adapter = new ListViewAdapter(this, mylist);
         memosListView.setAdapter(adapter);
         dataAlterungszustand.close();
 
     }
-
 
 
     @Override
@@ -473,60 +472,60 @@ public class MainActivity extends AppCompatActivity  implements Runnable{
         /*
                 Butten Save Sample
         */
-                Button buttonAddProductSample = (Button) findViewById(R.id.sampleSave);
-                final EditText editTextInfo = (EditText) findViewById(R.id.sampleInfo);
-                final EditText editTextName = (EditText) findViewById(R.id.sampleName);
-                final EditText editTextDate = (EditText) findViewById(R.id.Sample_Date);
-                final Spinner editTextLieferung = (Spinner) findViewById(R.id.spinner_SampleDeliverd);
+        Button buttonAddProductSample = (Button) findViewById(R.id.sampleSave);
+        final EditText editTextInfo = (EditText) findViewById(R.id.sampleInfo);
+        final EditText editTextName = (EditText) findViewById(R.id.sampleName);
+        final EditText editTextDate = (EditText) findViewById(R.id.Sample_Date);
+        final Spinner editTextLieferung = (Spinner) findViewById(R.id.spinner_SampleDeliverd);
 
 
+        buttonAddProductSample.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
 
-                buttonAddProductSample.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
+                String info = editTextInfo.getText().toString();
+                String name = editTextName.getText().toString();
+                String date = editTextDate.getText().toString();
+                String lieferung = editTextLieferung.getSelectedItem().toString();
 
-                        String info = editTextInfo.getText().toString();
-                        String name = editTextName.getText().toString();
-                        String date = editTextDate.getText().toString();
-                        String lieferung = editTextLieferung.getSelectedItem().toString();
-
-                        if(TextUtils.isEmpty(info)) {
-                            editTextInfo.setError(getString(R.string.output_errorMessage));
-                            return;
-                        }
-                        if(TextUtils.isEmpty(name)) {
-                            editTextName.setError(getString(R.string.output_errorMessage));
-                            return;
-                        }
-                        if(TextUtils.isEmpty(date)) {
-                            editTextDate.setError(getString(R.string.output_errorMessage));
-                            return;
-                        }
-                        if(TextUtils.isEmpty(lieferung)) {
-                            //todo error
-                            return;
-                        }
+                if (TextUtils.isEmpty(info)) {
+                    editTextInfo.setError(getString(R.string.output_errorMessage));
+                    return;
+                }
+                if (TextUtils.isEmpty(name)) {
+                    editTextName.setError(getString(R.string.output_errorMessage));
+                    return;
+                }
+                if (TextUtils.isEmpty(date)) {
+                    editTextDate.setError(getString(R.string.output_errorMessage));
+                    return;
+                }
+                if (TextUtils.isEmpty(lieferung)) {
+                    //todo error
+                    return;
+                }
 
 
-                        dataProbe.open();
-                        dataLieferung.open();
-                        Log.d(LOG_TAG, lieferung);
-                        Log.d(LOG_TAG, dataLieferung.getAllLieferung(lieferung).toString());
+                dataProbe.open();
+                dataLieferung.open();
+                Log.d(LOG_TAG, lieferung);
+                Log.d(LOG_TAG, dataLieferung.getAllLieferung(lieferung).toString());
 
-                        Long id = dataLieferung.getAllLieferung(lieferung).get(0).getId();
-                        Date dTemp = Date.valueOf(date);
-                        dataProbe.createProbe(
-                                id , dTemp ,name, info);
-                        dataLieferung.close();
-                        dataProbe.close();
+                Long id = dataLieferung.getAllLieferung(lieferung).get(0).getId();
+                Date dTemp = Date.valueOf(date);
+                dataProbe.createProbe(
+                        id, dTemp, name, info);
+                dataLieferung.close();
+                dataProbe.close();
 
-                        InputMethodManager inputMethodManager;
-                        inputMethodManager = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
-                        if(getCurrentFocus() != null) {
-                            inputMethodManager.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
-                        }
+                InputMethodManager inputMethodManager;
+                inputMethodManager = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
+                if (getCurrentFocus() != null) {
+                    inputMethodManager.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
+                }
 
                 showAllListEntriesSampel();
+                makeSpinner();
             }
         });
         /*      ENDE
@@ -537,6 +536,53 @@ public class MainActivity extends AppCompatActivity  implements Runnable{
 
                 Butten Save Scan
          */
+
+
+        // get the text view and buttons from the xml layout
+
+        final LocationListener locationListener = new LocationListener() {
+            @Override
+            public void onLocationChanged(Location location) {
+                mlocation = location;
+                Log.d("Location Changes", location.toString());
+            }
+
+            @Override
+            public void onStatusChanged(String provider, int status, Bundle extras) {
+                Log.d("Status Changed", String.valueOf(status));
+            }
+
+            @Override
+            public void onProviderEnabled(String provider) {
+                Log.d("Provider Enabled", provider);
+            }
+
+            @Override
+            public void onProviderDisabled(String provider) {
+                Log.d("Provider Disabled", provider);
+            }
+        };
+
+        // Now first make a criteria with your requirements
+        // this is done to save the battery life of the device
+        // there are various other other criteria you can search for..
+        final Criteria criteria = new Criteria();
+        criteria.setAccuracy(Criteria.ACCURACY_COARSE);
+        criteria.setPowerRequirement(Criteria.POWER_LOW);
+        criteria.setAltitudeRequired(false);
+        criteria.setBearingRequired(false);
+        criteria.setSpeedRequired(false);
+        criteria.setCostAllowed(true);
+        criteria.setHorizontalAccuracy(Criteria.ACCURACY_HIGH);
+        criteria.setVerticalAccuracy(Criteria.ACCURACY_HIGH);
+
+        // Now create a location manager
+        final LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+
+        // This is the Best And IMPORTANT part
+        final Looper looper = null;
+
+
         Button buttonAddScann = (Button) findViewById(R.id.ScannSave);
         final EditText editTextScann_Info = (EditText) findViewById(R.id.Scann_Description);
         final EditText editTextScann_Name = (EditText) findViewById(R.id.Scann_Name);
@@ -546,27 +592,42 @@ public class MainActivity extends AppCompatActivity  implements Runnable{
         final TextView ed_messung1 = (TextView) findViewById(R.id.textViewQ1_result);
         final TextView ed_messung2 = (TextView) findViewById(R.id.textViewQ2_result);
 
-                buttonAddScann.setOnClickListener(new View.OnClickListener() {
+        buttonAddScann.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
+
+                if (ActivityCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                    // TODO: Consider calling
+                    //    ActivityCompat#requestPermissions
+                    // here to request the missing permissions, and then overriding
+                    //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+                    //                                          int[] grantResults)
+                    // to handle the case where the user grants the permission. See the documentation
+                    // for ActivityCompat#requestPermissions for more details.
+                    return;
+                }
+                locationManager.requestSingleUpdate(criteria, locationListener, looper);
+                Toast.makeText(context, mlocation.getLatitude() + mlocation.getLongitude() +"", Toast.LENGTH_LONG).show();
+
 
                 String info = editTextScann_Info.getText().toString();
                 String name = editTextScann_Name.getText().toString();
                 String internID = editTextScann_InternID.getText().toString();
-                String sample ="1";// editTextSample.getSelectedItem().toString();
+                String sample = "1";// editTextSample.getSelectedItem().toString();
 
 
                 //todo if empty Textview
 
-                if(TextUtils.isEmpty(info)) {
+                if (TextUtils.isEmpty(info)) {
                     editTextInfo.setError(getString(R.string.output_errorMessage));
                     return;
                 }
-                if(TextUtils.isEmpty(name)) {
+                if (TextUtils.isEmpty(name)) {
                     editTextName.setError(getString(R.string.output_errorMessage));
                     return;
                 }
-                if(TextUtils.isEmpty(internID)) {
+                if (TextUtils.isEmpty(internID)) {
                     editTextScann_InternID.setError(getString(R.string.output_errorMessage));
                     return;
                 }
@@ -586,6 +647,7 @@ public class MainActivity extends AppCompatActivity  implements Runnable{
                 }
 
                 showAllListEntriesAlterung();
+                makeSpinner();
                 Toast.makeText(context, "Scanned data Saved", Toast.LENGTH_LONG).show();
 
             }
