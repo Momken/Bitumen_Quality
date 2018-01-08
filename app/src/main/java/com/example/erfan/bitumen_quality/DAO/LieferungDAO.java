@@ -10,6 +10,8 @@ import com.example.erfan.bitumen_quality.DB.BitumenDBHelper;
 import com.example.erfan.bitumen_quality.DB.Lieferung;
 
 import java.sql.Date;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -51,9 +53,12 @@ public class LieferungDAO {
 
     public Lieferung createLieferung( long herstllerId, Date date, String bezeichnung, String beschreibung) {
         ContentValues values = new ContentValues();
+//        DateFormat df = new SimpleDateFormat("dd/MM/yy HH:mm:ss");
+
+        DateFormat df = new SimpleDateFormat("dd/MM/yyyy");
 
         values.put(BitumenDBHelper.L_Hersteller_ID, herstllerId);
-        values.put(BitumenDBHelper.Lieferung_Datum, date.toString());
+        values.put(BitumenDBHelper.Lieferung_Datum, df.format(date));
         values.put(BitumenDBHelper.Lieferung_Bezeichnung, bezeichnung);
         values.put(BitumenDBHelper.Lieferung_Beschreibung, beschreibung);
 
@@ -93,7 +98,7 @@ public class LieferungDAO {
 
         String bezeichnung = cursor.getString(idBeschreibung);
         String beschreibung = cursor.getString(idBezeichnung);
-        Date datum = new Date(cursor.getLong(idDatum)*1000);
+        String datum=cursor.getString(idDatum);
         long idHersteller = cursor.getLong(idLHersteller);
         long id = cursor.getLong(idLieferung);
 

@@ -10,11 +10,11 @@ public class Lieferung {
 
     private long id;
     private long herstllerId;
-    private Date date;
+    private String date;
     private String bezeichnung;
     private String beschreibung;
 
-    public Lieferung(long id, long herstllerId, Date date, String bezeichnung, String beschreibung) {
+    public Lieferung(long id, long herstllerId, String date, String bezeichnung, String beschreibung) {
         this.id = id;
         this.herstllerId = herstllerId;
         this.date = date;
@@ -38,11 +38,11 @@ public class Lieferung {
         this.herstllerId = herstllerId;
     }
 
-    public Date getDate() {
+    public String getDate() {
         return date;
     }
 
-    public void setDate(Date date) {
+    public void setDate(String date) {
         this.date = date;
     }
 

@@ -21,7 +21,7 @@
         android:layout_weight="0.02"
         android:ems="10"
         android:inputType="date"
-        android:text="JJJJ-MM-DD" />
+        android:text="YYYY-MM-DD" />
 
     <AutoCompleteTextView
         android:id="@+id/sampleName"

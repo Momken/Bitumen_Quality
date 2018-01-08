@@ -58,7 +58,9 @@ public class AlterungszustandDAO {
         ContentValues values = new ContentValues();
 
         values.put(BitumenDBHelper.A_Lieferung_ID, idLieferung);
-        DateFormat df = new SimpleDateFormat("dd/MM/yy HH:mm:ss");
+//        DateFormat df = new SimpleDateFormat("dd/MM/yy HH:mm:ss");
+
+        DateFormat df = new SimpleDateFormat("dd/MM/yyyy");
 
         values.put(BitumenDBHelper.Alterungszustand_Datum, df.format(datum));
         values.put(BitumenDBHelper.Alterungszustand_Bezeichnung, bezeichnung);
