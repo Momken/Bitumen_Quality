@@ -849,17 +849,17 @@ public class MainActivity extends AppCompatActivity implements Runnable {
         spec.setIndicator("Scanned Data");
         host.addTab(spec);
 
-/*
-        //Tab 3
-        spec = host.newTabSpec("Tab Three");
-        spec.setContent(R.id.tab3);
-        spec.setIndicator("Tranche");
-        host.addTab(spec);
-*/
+
         //Tab 4
         spec = host.newTabSpec("Tab Two");
         spec.setContent(R.id.tab2);
         spec.setIndicator("Sample Properties");
+        host.addTab(spec);
+
+        //Tab 3
+        spec = host.newTabSpec("Tab Three");
+        spec.setContent(R.id.tab3);
+        spec.setIndicator("Grapic");
         host.addTab(spec);
     }
 

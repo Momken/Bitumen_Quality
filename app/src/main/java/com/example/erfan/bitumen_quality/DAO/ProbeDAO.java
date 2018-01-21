@@ -10,6 +10,8 @@ import com.example.erfan.bitumen_quality.DB.BitumenDBHelper;
 import com.example.erfan.bitumen_quality.DB.Probe;
 
 import java.sql.Date;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -53,8 +55,11 @@ public class ProbeDAO {
     public Probe createProbe(long lieferungId, Date date, String bezeichnung, String beschreibung) {
         ContentValues values = new ContentValues();
 
+        DateFormat df = new SimpleDateFormat("dd/MM/yyyy");
+
+
         values.put(BitumenDBHelper.P_Lieferung_ID, lieferungId);
-        values.put(BitumenDBHelper.Probe_Datum, date.toString());
+        values.put(BitumenDBHelper.Probe_Datum, df.format(date));
         values.put(BitumenDBHelper.Probe_Bezeichnung, bezeichnung);
         values.put(BitumenDBHelper.Probe_Beschreibung, beschreibung);
 
@@ -92,12 +97,9 @@ public class ProbeDAO {
 
         String bezeichnung = cursor.getString(idBeschreibung);
         String beschreibung = cursor.getString(idBezeichnung);
-        Date datum = new Date((cursor.getLong(idDatum)*1000));
+        String datum=cursor.getString(idDatum);
         long idLiefer = cursor.getLong(idLieferung);
         long id = cursor.getLong(idProbe);
-
-
-        Log.d(LOG_TAG,"Probe2");
 
         Probe temp = new Probe(id, idLiefer, datum, beschreibung, bezeichnung);
 

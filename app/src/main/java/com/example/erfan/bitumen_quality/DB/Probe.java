@@ -10,12 +10,12 @@ public class Probe {
 
     private long id;
     private long LieferungId;
-    private Date date;
+    private String date;
     private String bezeichnung;
     private String beschreibung;
 
 
-    public Probe(long id, long lieferungId, Date date, String bezeichnung, String beschreibung) {
+    public Probe(long id, long lieferungId, String date, String bezeichnung, String beschreibung) {
         this.id = id;
         LieferungId = lieferungId;
         this.date = date;
@@ -40,11 +40,11 @@ public class Probe {
         LieferungId = lieferungId;
     }
 
-    public Date getDate() {
+    public String getDate() {
         return date;
     }
 
-    public void setDate(Date date) {
+    public void setDate(String date) {
         this.date = date;
     }
 
