@@ -64,6 +64,8 @@ import java.util.regex.Pattern;
 
 import android.util.SparseBooleanArray;
 import android.view.ActionMode;
+import pl.pawelkleczkowski.customgauge.CustomGauge;
+
 
 
 /**
@@ -196,6 +198,17 @@ public class MainActivity extends AppCompatActivity implements Runnable {
         showAllListEntriesAlterung();
         initializeContextualActionBarAlterung();
         initializeContextualActionBarProbe();
+
+        CustomGauge gauge1  = (CustomGauge) findViewById(R.id.gauge1);
+
+        CustomGauge gauge2  = (CustomGauge) findViewById(R.id.gauge2);
+        gauge2.getPointStartColor();
+        gauge2.setPointStartColor(Color.rgb(34,139,34));
+        gauge2.setPointEndColor(Color.rgb(34,139,34));
+
+        gauge2.setValue(60);
+        gauge1.setValue(100);
+
 
 
     }
@@ -856,11 +869,15 @@ public class MainActivity extends AppCompatActivity implements Runnable {
         spec.setIndicator("Sample Properties");
         host.addTab(spec);
 
+
+
+
+/*
         //Tab 3
         spec = host.newTabSpec("Tab Three");
         spec.setContent(R.id.tab3);
         spec.setIndicator("Grapic");
-        host.addTab(spec);
+        host.addTab(spec);*/
     }
 
 
@@ -1137,11 +1154,15 @@ public class MainActivity extends AppCompatActivity implements Runnable {
                                     TextView resultQ1 = (TextView)findViewById(R.id.textViewQ1_result);
                                     TextView resultQ2 = (TextView)findViewById(R.id.textViewQ2_result);
                                     TextView info = (TextView)findViewById(R.id.Info);
+                                    CustomGauge gauge1  = (CustomGauge) findViewById(R.id.gauge1);
+                                    CustomGauge gauge2  = (CustomGauge) findViewById(R.id.gauge2);
 
 //TODO erfan
                                     String msg = "Raw Values: V1: "+ v1 +" V2: "+ v2 +" V3: "+ v3 +" AMP: " +amp;
                                     resultQ1.setText(q1+"");
                                     resultQ2.setText(q2+"");
+                                    gauge2.setValue((int)(q2*100));
+                                    gauge1.setValue((int)(q1*100));
                                     info.setText(msg);
                                     TextView result = (TextView)findViewById(R.id.Result);
                                     result.setText("");

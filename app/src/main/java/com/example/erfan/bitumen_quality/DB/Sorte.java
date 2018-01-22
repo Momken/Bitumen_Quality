@@ -8,6 +8,7 @@ public class Sorte {
     private String bezeichnung;
     private String beschreibung;
 
+
     public Sorte(long id, String bezeichnung, String beschreibung) {
         this.id = id;
         this.bezeichnung = bezeichnung;
