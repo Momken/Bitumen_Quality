@@ -35,16 +35,25 @@ public class BitumenDBHelper extends SQLiteOpenHelper{
 
     //Sorte
     public static final String TABLE_Sorte_LIST = "Sorte_list";
-
     public static final String Sorte_ID = "_id";
     public static final String Sorte_bezeichnung = "bezeichnung";
     public static final String Sorte_beschreibung = "beschreibung";
+    public static final String Sorte_q1MinGreenQ = "Q1MinGreenQ";
+    public static final String Sorte_q1Min = "Q1Min";
+    public static final String Sorte_q2MinGreenQ = "Q2MinGreenQ";
+    public static final String Sorte_q2Min = "Q2Min";
+
 
     public static final String SQL_CREATE_Sorte = "CREATE TABLE " + TABLE_Sorte_LIST +
             "(" +
             Sorte_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
             Sorte_bezeichnung + " TEXT NOT NULL, " +
-            Sorte_beschreibung + " TEXT NOT NULL " +
+            Sorte_beschreibung + " TEXT NOT NULL, " +
+            Sorte_q1MinGreenQ + " TEXT NOT NULL, " +
+            Sorte_q1Min + " TEXT NOT NULL, " +
+            Sorte_q2MinGreenQ + " TEXT NOT NULL, " +
+            Sorte_q2Min + " TEXT NOT NULL " +
+
             ");";
 
 
@@ -86,8 +95,6 @@ public class BitumenDBHelper extends SQLiteOpenHelper{
 
     //Probe
     public static final String TABLE_Probe_LIST = "Probe_list";
-
-
     public static final String Probe_ID = "_id";
     public static final String P_Lieferung_ID = "_idLieferung";
     public static final String Probe_Datum = "datum";
@@ -108,8 +115,6 @@ public class BitumenDBHelper extends SQLiteOpenHelper{
     //Alterungszustand
 
     public static final String TABLE_Alterungszustand_LIST = "Alterungszustand_list";
-
-
     public static final String Alterungszustand_ID = "_id";
     public static final String A_Lieferung_ID = "_idLieferung";
     public static final String Alterungszustand_Datum = "datum";
@@ -138,12 +143,12 @@ public class BitumenDBHelper extends SQLiteOpenHelper{
     @Override
     public void onCreate(SQLiteDatabase db) {
         try {
-            Log.d(LOG_TAG, "Die Tabelle wird mit SQL-Befehl: Crate" + " angelegt.");
+            Log.d(LOG_TAG, "Die Tabelle wird mit SQL-Befehl: Create" + " angelegt.");
             db.execSQL(SQL_CREATE_Bitumen);
+            db.execSQL(SQL_CREATE_Probe);
             db.execSQL(SQL_CREATE_Sorte);
             db.execSQL(SQL_CREATE_Hersteller);
             db.execSQL(SQL_CREATE_Lieferung);
-            db.execSQL(SQL_CREATE_Probe);
             db.execSQL(SQL_CREATE_Alterungszustand);
 
         }

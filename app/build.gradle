@@ -2,7 +2,7 @@ apply plugin: 'com.android.application'
 
 android {
     compileSdkVersion 25
-    buildToolsVersion "26.0.0"
+    buildToolsVersion '26.0.2'
     defaultConfig {
         applicationId "com.example.erfan.bitumen_quality"
         minSdkVersion 23
@@ -44,7 +44,10 @@ dependencies {
 }
 repositories {
     jcenter()
+    google()
 }
 dependencies {
     compile 'pl.pawelkleczkowski.customgauge:CustomGauge:1.0.3'
+    compile 'com.google.android.gms:play-services-location:11.8.0'
+
 }

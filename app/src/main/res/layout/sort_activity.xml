@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:weightSum="1"
@@ -19,6 +20,35 @@
         android:layout_height="wrap_content"
         android:layout_weight="0.22"
         android:text="Beschreibung" />
+
+    <MultiAutoCompleteTextView
+        android:id="@+id/Sorte_q1MinGreenQ"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="0.02"
+        android:text="Q1 min Green" />
+
+    <MultiAutoCompleteTextView
+        android:id="@+id/Sorte_q1Min"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="0.02"
+        android:text="Beschreibung"
+        tools:text="Q1 min Yellow" />
+
+    <MultiAutoCompleteTextView
+        android:id="@+id/Sorte_q2MinGreenQ"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="0.02"
+        android:text="Q2 min Green" />
+
+    <MultiAutoCompleteTextView
+        android:id="@+id/Sorte_q2Min"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="0.02"
+        android:text="Q2 min Yellow" />
 
     <Button
         android:id="@+id/SorteSave"

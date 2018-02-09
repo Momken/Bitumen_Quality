@@ -1,6 +1,7 @@
 package com.example.erfan.bitumen_quality;
 
 import android.Manifest;
+import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
@@ -8,6 +9,7 @@ import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Looper;
 import android.support.v4.app.ActivityCompat;
@@ -45,14 +47,20 @@ import android.hardware.usb.UsbManager;
 import android.hardware.usb.UsbRequest;
 
 import com.example.erfan.bitumen_quality.DAO.AlterungszustandDAO;
+import com.example.erfan.bitumen_quality.DAO.HerstellerDAO;
 import com.example.erfan.bitumen_quality.DAO.LieferungDAO;
 import com.example.erfan.bitumen_quality.DAO.ProbeDAO;
 import com.example.erfan.bitumen_quality.DAO.SorteDAO;
 import com.example.erfan.bitumen_quality.DB.Alterungszustand;
 import com.example.erfan.bitumen_quality.DB.Bitumen;
 import com.example.erfan.bitumen_quality.DAO.BitumenDAO;
+import com.example.erfan.bitumen_quality.DB.Hersteller;
 import com.example.erfan.bitumen_quality.DB.Lieferung;
 import com.example.erfan.bitumen_quality.DB.Probe;
+import com.example.erfan.bitumen_quality.DB.Sorte;
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.tasks.OnSuccessListener;
 
 import java.sql.Date;
 import java.util.ArrayList;
@@ -80,7 +88,7 @@ public class MainActivity extends AppCompatActivity implements Runnable {
     private SorteDAO dataSorte = new SorteDAO(this);
     private LieferungDAO dataLieferung = new LieferungDAO(this);
     private ProbeDAO dataProbe = new ProbeDAO(this);
-    ;
+    HerstellerDAO  dataHersteller = new HerstellerDAO(this);
     private AlterungszustandDAO dataAlterungszustand = new AlterungszustandDAO(this);
     private String longitude;
     private String latitude;
@@ -108,15 +116,33 @@ public class MainActivity extends AppCompatActivity implements Runnable {
     Context context;
 
 
+
     StringBuilder receiveddata;
     StringBuilder stringData;
 
     byte[] readBytes = new byte[256];
 
+    private FusedLocationProviderClient mFusedLocationClient;
     Location mlocation;
+    final Criteria criteria = new Criteria();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
+        // Now first make a criteria with your requirements
+        // this is done to save the battery life of the device
+        // there are various other other criteria you can search for..
+
+        criteria.setAccuracy(Criteria.ACCURACY_COARSE);
+        criteria.setPowerRequirement(Criteria.POWER_LOW);
+        criteria.setAltitudeRequired(false);
+        criteria.setBearingRequired(false);
+        criteria.setSpeedRequired(false);
+        criteria.setCostAllowed(true);
+        criteria.setHorizontalAccuracy(Criteria.ACCURACY_HIGH);
+        criteria.setVerticalAccuracy(Criteria.ACCURACY_HIGH);
+
+
         super.onCreate(savedInstanceState);
 
         /*********GUI 1
@@ -200,16 +226,99 @@ public class MainActivity extends AppCompatActivity implements Runnable {
         initializeContextualActionBarProbe();
 
         CustomGauge gauge1  = (CustomGauge) findViewById(R.id.gauge1);
-
         CustomGauge gauge2  = (CustomGauge) findViewById(R.id.gauge2);
-        gauge2.getPointStartColor();
-        gauge2.setPointStartColor(Color.rgb(34,139,34));
-        gauge2.setPointEndColor(Color.rgb(34,139,34));
+        gauge2.setValue(1);
+        gauge1.setValue(1);
 
-        gauge2.setValue(60);
-        gauge1.setValue(100);
+        mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
+
+    }
+
+    private void setGaugeColor(int q1, int q2){
+        final Spinner editTextSample = (Spinner) findViewById(R.id.Scann_SpinnerProbe);
+        String name = editTextSample.getSelectedItem().toString();
+ Log.d(LOG_TAG, "list.size(): name :" + name );
+
+        dataProbe.open();
+        List<Probe> list = dataProbe.getAllProbe(name);
+        dataProbe.close();
+Log.d(LOG_TAG, "list.size(): " + list.size() );
+        dataLieferung.open();
+        List<Lieferung> listlieferung = dataLieferung.getAllLieferung();
+        long herstellerid = 0;
+        dataLieferung.close();
+        for (int i = 0; i < listlieferung.size();i++){
+           if (listlieferung.get(i).getId()== list.get(0).getLieferungId() ){
+             herstellerid =  listlieferung.get(i).getHerstllerId();
+           }
+        }
+
+        dataHersteller.open();
+        List<Hersteller> listHersteller = dataHersteller.getAllHersteller();;
+        long sorteid = 0 ;
+
+        for (int i = 0; i < listHersteller.size();i++){
+            if (listHersteller.get(i).getId()== herstellerid ){
+                sorteid =  listHersteller.get(i).getSortenId();
+            }
+        }
+        dataHersteller.close();
+
+        dataSorte.open();
+        Sorte tempS = null;
+        List<Sorte> listSorte = dataSorte.getAllSorte();
+        for (int i = 0; i < listSorte.size();i++){
+            if (listSorte.get(i).getId()== sorteid ){
+                tempS =  listSorte.get(i);
+            }
+        }
 
 
+        dataSorte.close();
+        if(tempS!= null) {
+
+            int q1minyellow = tempS.getQ1Min();
+            int q1mingreen = tempS.getQ1MinGreenQ();
+            int q2minyellow = tempS.getQ2Min();
+            int q2mingreen = tempS.getQ2MinGreenQ();
+
+            CustomGauge gauge1 = (CustomGauge) findViewById(R.id.gauge1);
+            CustomGauge gauge2 = (CustomGauge) findViewById(R.id.gauge2);
+
+
+            if (q1 > q1mingreen) {
+                gauge1.getPointStartColor();
+                gauge1.setPointStartColor(Color.rgb(34, 139, 34));
+                gauge1.setPointEndColor(Color.rgb(34, 139, 34));
+            } else if (q1 > q1minyellow) {
+                gauge1.getPointStartColor();
+                gauge1.setPointStartColor(Color.rgb(255, 255, 0));
+                gauge1.setPointEndColor(Color.rgb(255, 255, 0));
+            } else {
+                gauge1.getPointStartColor();
+                gauge1.setPointStartColor(Color.rgb(255, 0, 0));
+                gauge1.setPointEndColor(Color.rgb(255, 0, 0));
+            }
+
+
+            if (q2 > q2mingreen) {
+                gauge2.getPointStartColor();
+                gauge2.setPointStartColor(Color.rgb(34, 139, 34));
+                gauge2.setPointEndColor(Color.rgb(34, 139, 34));
+            } else if (q2 > q2minyellow) {
+                gauge2.getPointStartColor();
+                gauge2.setPointStartColor(Color.rgb(255, 255, 0));
+                gauge2.setPointEndColor(Color.rgb(255, 255, 0));
+            } else {
+                gauge2.getPointStartColor();
+                gauge2.setPointStartColor(Color.rgb(255, 0, 0));
+                gauge2.setPointEndColor(Color.rgb(255, 0, 0));
+            }
+
+
+            gauge2.setValue(q2);
+            gauge1.setValue(q1);
+        }
 
     }
 
@@ -481,6 +590,18 @@ public class MainActivity extends AppCompatActivity implements Runnable {
         dataSource.close();
     }
 
+    @Override
+    public void onRequestPermissionsResult(int requestCode,
+                                           String[] permissions,
+                                           int[] grantResults){
+
+        Log.d(LOG_TAG, "got location premission: "+ requestCode + " "
+        +" " + permissions
+        + " " +grantResults);
+
+
+    }
+
     private void activateAddButton() {
         /*
                 Butten Save Sample
@@ -576,6 +697,7 @@ public class MainActivity extends AppCompatActivity implements Runnable {
             }
         };
 
+        /*
         // Now first make a criteria with your requirements
         // this is done to save the battery life of the device
         // there are various other other criteria you can search for..
@@ -589,6 +711,8 @@ public class MainActivity extends AppCompatActivity implements Runnable {
         criteria.setHorizontalAccuracy(Criteria.ACCURACY_HIGH);
         criteria.setVerticalAccuracy(Criteria.ACCURACY_HIGH);
 
+        */
+
         // Now create a location manager
         final LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
 
@@ -597,6 +721,8 @@ public class MainActivity extends AppCompatActivity implements Runnable {
 
 
         Button buttonAddScann = (Button) findViewById(R.id.ScannSave);
+        Log.d(LOG_TAG, "save button initialized");
+
         final EditText editTextScann_Info = (EditText) findViewById(R.id.Scann_Description);
         final EditText editTextScann_Name = (EditText) findViewById(R.id.Scann_Name);
         final EditText editTextScann_InternID = (EditText) findViewById(R.id.Scann_intern_number_id);
@@ -604,24 +730,14 @@ public class MainActivity extends AppCompatActivity implements Runnable {
         final TextView ed_messungsfaktoren = (TextView) findViewById(R.id.Info);
         final TextView ed_messung1 = (TextView) findViewById(R.id.textViewQ1_result);
         final TextView ed_messung2 = (TextView) findViewById(R.id.textViewQ2_result);
+        final Activity me = this;
 
         buttonAddScann.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
+                Log.d(LOG_TAG, "save button clicked");
 
-                if (ActivityCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                    // TODO: Consider calling
-                    //    ActivityCompat#requestPermissions
-                    // here to request the missing permissions, and then overriding
-                    //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-                    //                                          int[] grantResults)
-                    // to handle the case where the user grants the permission. See the documentation
-                    // for ActivityCompat#requestPermissions for more details.
-                    return;
-                }
-                locationManager.requestSingleUpdate(criteria, locationListener, looper);
-                Toast.makeText(context, mlocation.getLatitude() + mlocation.getLongitude() +"", Toast.LENGTH_LONG).show();
 
 
                 String info = editTextScann_Info.getText().toString();
@@ -630,7 +746,16 @@ public class MainActivity extends AppCompatActivity implements Runnable {
                 String sample = "1";// editTextSample.getSelectedItem().toString();
 
 
-                //todo if empty Textview
+
+                String txt = "geo:" + mlocation.getLatitude() + "," + mlocation.getLongitude() +
+                        "?q=" + mlocation.getLatitude() + "," + mlocation.getLongitude();
+
+                /*
+                // on click auf DB-Eintrag
+                Uri uri = Uri.parse(txt);
+                Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+                startActivity(intent);
+                */
 
                 if (TextUtils.isEmpty(info)) {
                     editTextInfo.setError(getString(R.string.output_errorMessage));
@@ -648,7 +773,7 @@ public class MainActivity extends AppCompatActivity implements Runnable {
 
                 dataAlterungszustand.open();
                 dataAlterungszustand.createAlterungszustand
-                        (0, new java.util.Date(), internID+" "+name+" "+info, ed_messungsfaktoren.getText().toString(),
+                        (0, new java.util.Date(), internID+" "+name+" "+info, ed_messungsfaktoren.getText().toString() + " " + txt,
                                 ed_messung1.getText().toString() + " " + ed_messung2.getText().toString()  );
                 dataAlterungszustand.close();
 
@@ -676,6 +801,42 @@ public class MainActivity extends AppCompatActivity implements Runnable {
             @Override
             public void onClick(View v) {
                 setupSettings_USB();
+
+
+                int permissionAccessLocationFine = ActivityCompat.checkSelfPermission(getApplicationContext(),
+                        Manifest.permission.ACCESS_FINE_LOCATION);
+                int permissionAccessLocationCoarse = ActivityCompat.checkSelfPermission(getApplicationContext(),
+                        Manifest.permission.ACCESS_COARSE_LOCATION);
+
+
+                if (permissionAccessLocationFine != PackageManager.PERMISSION_GRANTED
+                        && permissionAccessLocationCoarse != PackageManager.PERMISSION_GRANTED) {
+                    // TODO: Consider calling
+                    //    ActivityCompat#requestPermissions
+                    // here to request the missing permissions, and then overriding
+                    //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+                    //                                          int[] grantResults)
+                    // to handle the case where the user grants the permission. See the documentation
+                    // for ActivityCompat#requestPermissions for more details.
+                    Log.d(LOG_TAG, "permission coarse: " + permissionAccessLocationCoarse +
+                            "; fine: " + permissionAccessLocationFine + "; parent: " + me);
+
+                    ActivityCompat.requestPermissions(me,
+                            new String[]{Manifest.permission.ACCESS_FINE_LOCATION},1);
+                }
+                locationManager.requestSingleUpdate(criteria, locationListener, looper);
+
+                mFusedLocationClient.getLastLocation().addOnSuccessListener(me, new OnSuccessListener<Location>() {
+                    @Override
+                    public void onSuccess(Location location) {
+
+
+                        if (location!= null){
+                            mlocation = location;
+                        }
+
+                    }
+                });
 
             }
         });
@@ -1157,12 +1318,14 @@ public class MainActivity extends AppCompatActivity implements Runnable {
                                     CustomGauge gauge1  = (CustomGauge) findViewById(R.id.gauge1);
                                     CustomGauge gauge2  = (CustomGauge) findViewById(R.id.gauge2);
 
+                                    setGaugeColor((int)(q1*100),(int)(q2*100));
+
+
 //TODO erfan
                                     String msg = "Raw Values: V1: "+ v1 +" V2: "+ v2 +" V3: "+ v3 +" AMP: " +amp;
                                     resultQ1.setText(q1+"");
                                     resultQ2.setText(q2+"");
-                                    gauge2.setValue((int)(q2*100));
-                                    gauge1.setValue((int)(q1*100));
+
                                     info.setText(msg);
                                     TextView result = (TextView)findViewById(R.id.Result);
                                     result.setText("");
@@ -1212,8 +1375,6 @@ public class MainActivity extends AppCompatActivity implements Runnable {
 
                         break;
                     }
-
-
 
                 }
 

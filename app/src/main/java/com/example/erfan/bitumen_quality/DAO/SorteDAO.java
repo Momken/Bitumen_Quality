@@ -26,7 +26,12 @@ public class SorteDAO {
     private String[] columns = {
             BitumenDBHelper.Sorte_ID,
             BitumenDBHelper.Sorte_bezeichnung,
-            BitumenDBHelper.Sorte_beschreibung
+            BitumenDBHelper.Sorte_beschreibung,
+            BitumenDBHelper.Sorte_q1MinGreenQ,
+            BitumenDBHelper.Sorte_q1Min,
+            BitumenDBHelper.Sorte_q2MinGreenQ,
+            BitumenDBHelper.Sorte_q2Min
+
     };
 
 
@@ -46,11 +51,17 @@ public class SorteDAO {
         Log.d(LOG_TAG, "Datenbank mit Hilfe des DbHelpers geschlossen.");
     }
 
-    public Sorte createSorte(String bezeichnung, String beschreibung) {
+    public Sorte createSorte(String bezeichnung, String beschreibung,int q1max, int q1min, int q2max, int q2min) {
         ContentValues values = new ContentValues();
 
         values.put(BitumenDBHelper.Sorte_bezeichnung, bezeichnung);
         values.put(BitumenDBHelper.Sorte_beschreibung, beschreibung);
+        values.put(BitumenDBHelper.Sorte_q1MinGreenQ, q1max);
+        values.put(BitumenDBHelper.Sorte_q1Min, q1min);
+        values.put(BitumenDBHelper.Sorte_q2MinGreenQ, q2max);
+        values.put(BitumenDBHelper.Sorte_q2Min, q2min);
+
+
 
         Log.d(LOG_TAG,values.toString());
         long insertId = database.insert(BitumenDBHelper.TABLE_Sorte_LIST, null, values);
@@ -82,13 +93,22 @@ public class SorteDAO {
         int idSorte = cursor.getColumnIndex(BitumenDBHelper.Sorte_ID);
         int idBezeichnung = cursor.getColumnIndex(BitumenDBHelper.Sorte_bezeichnung);
         int idBescheibung = cursor.getColumnIndex(BitumenDBHelper.Sorte_beschreibung);
+        int idq1MinGreenQ = cursor.getColumnIndex(BitumenDBHelper.Sorte_q1MinGreenQ);
+        int idq1m = cursor.getColumnIndex(BitumenDBHelper.Sorte_q1Min);
+        int idq2MinGreenQ = cursor.getColumnIndex(BitumenDBHelper.Sorte_q2MinGreenQ);
+        int idq2m = cursor.getColumnIndex(BitumenDBHelper.Sorte_q2Min);
 
 
         String beschreibung = cursor.getString(idBescheibung);
         String bezeichnung = cursor.getString(idBezeichnung);
+        int q1MinGreenQ = cursor.getInt(idq1MinGreenQ);
+        int q1Min = cursor.getInt(idq1m);
+        int q2MinGreenQ = cursor.getInt(idq2MinGreenQ);
+        int q2Min = cursor.getInt(idq2m);
+
         long id = cursor.getLong(idSorte);
 
-        Sorte sorte = new Sorte(id, bezeichnung, beschreibung);
+        Sorte sorte = new Sorte(id, bezeichnung, beschreibung, q1MinGreenQ, q1Min, q2MinGreenQ, q2Min);
 
         return sorte;
     }
@@ -124,7 +144,10 @@ public class SorteDAO {
         Sorte temp;
 
         while(!cursor.isAfterLast()) {
+
             temp = cursorToSorte(cursor);
+
+
             if(temp.getBezeichnung().equals(name))
                 list.add(temp);
 

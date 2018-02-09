@@ -127,4 +127,27 @@ public class ProbeDAO {
 
         return list;
     }
+
+    public List<Probe> getAllProbe(String name) {
+        List<Probe> list = new ArrayList<>();
+
+        Cursor cursor = database.query(BitumenDBHelper.TABLE_Probe_LIST,
+                columns, null, null, null, null, null);
+
+        cursor.moveToFirst();
+        Probe temp;
+
+        while(!cursor.isAfterLast()) {
+            temp = cursorToProbe(cursor);
+            if(temp.getBezeichnung().equals(name))
+            list.add(temp);
+            Log.d(LOG_TAG, "ID: " + temp.getId() + ", Inhalt: " + temp.toString());
+
+            cursor.moveToNext();
+        }
+
+        cursor.close();
+
+        return list;
+    }
 }

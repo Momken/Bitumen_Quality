@@ -25,11 +25,10 @@
         app:gaugeDividerColor="#F0F4C3"
         app:gaugeDividerDrawFirst="false"
         app:gaugeDividerDrawLast="false"
-        app:gaugeDividerSize="1"
+        app:gaugeDividerSize="0"
         app:gaugeDividerStep="25"
         app:gaugeEndValue="100"
-        app:gaugePointEndColor="@color/green"
-        app:gaugePointStartColor="@color/red"
+
         app:gaugeStartAngle="135"
         app:gaugeStartValue="0"
         app:gaugeStrokeCap="ROUND"
@@ -54,7 +53,7 @@
         app:gaugeDividerColor="#F0F4C3"
         app:gaugeDividerDrawFirst="false"
         app:gaugeDividerDrawLast="false"
-        app:gaugeDividerSize="1"
+        app:gaugeDividerSize="0"
         app:gaugeDividerStep="25"
         app:gaugeEndValue="100"
 
@@ -87,19 +86,14 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginLeft="8dp"
-        android:layout_marginStart="8dp"
+        android:layout_marginRight="8dp"
         android:text="Save"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintLeft_toRightOf="@+id/Scann_ConnectButton"
         app:layout_constraintRight_toRightOf="parent"
         tools:layout_constraintLeft_creator="1"
-        tools:layout_constraintRight_creator="1"
-        android:layout_marginTop="8dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintVertical_bias="0.79"
-        app:layout_constraintTop_toTopOf="@+id/Scann_SpinnerProbe"
-        app:layout_constraintLeft_toRightOf="@+id/Scann_ConnectButton"
-        android:layout_marginBottom="0dp"
-        android:layout_marginRight="8dp" />
+        tools:layout_constraintRight_creator="1" />
 
     <Button
         android:id="@+id/Scann_ConnectButton"
@@ -216,7 +210,7 @@
         android:id="@+id/Info"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="10dp"
+        android:layout_marginBottom="24dp"
         android:layout_marginLeft="8dp"
         android:layout_marginRight="8dp"
         android:layout_marginTop="8dp"
@@ -239,10 +233,9 @@
         android:id="@+id/Result"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="24dp"
         android:layout_marginLeft="8dp"
         android:layout_marginRight="8dp"
-        android:layout_marginStart="8dp"
         android:gravity="center_horizontal|center_vertical"
         android:text="Information"
         android:textAppearance="@style/TextAppearance.AppCompat.Display2"
@@ -250,7 +243,6 @@
         android:textSize="24sp"
         app:layout_constraintBottom_toTopOf="@+id/ScannSave"
         app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        android:layout_marginBottom="24dp" />
+        app:layout_constraintRight_toRightOf="parent" />
 
 </android.support.constraint.ConstraintLayout>

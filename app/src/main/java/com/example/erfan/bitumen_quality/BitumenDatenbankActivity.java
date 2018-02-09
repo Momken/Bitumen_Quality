@@ -472,9 +472,9 @@ public class BitumenDatenbankActivity extends AppCompatActivity {
                 Sorte sorte = memoList.get(i);
 
                 map.put("FIRST_COLUMN",  ""+ sorte.getBezeichnung() );
-                map.put("SECOND_COLUMN"," " );
-                map.put("THIRD_COLUMN"," "+  sorte.getBeschreibung());
-                map.put("FOURTH_COLUMN"," " );
+                map.put("SECOND_COLUMN"," "+  sorte.getBeschreibung()  );
+                map.put("THIRD_COLUMN","Q1 " + sorte.getQ1Min() +" "+ sorte.getQ1MinGreenQ() );
+                map.put("FOURTH_COLUMN","Q2 " + sorte.getQ2Min() +" "+ sorte.getQ2MinGreenQ() );
                 mylist.add(map);
             }
 
@@ -582,7 +582,7 @@ public class BitumenDatenbankActivity extends AppCompatActivity {
                     String name = editTextName.getText().toString();
                     String date = editTextDate.getText().toString();
                     String lieferungHersteller = editTextLHersteller.getSelectedItem().toString();
-                    String[] segs = lieferungHersteller.split("(\\s|\\p{Punct})+");
+                    String[] segs = lieferungHersteller.split("\\s+");
 
 
                     if(TextUtils.isEmpty(info)) {
@@ -605,6 +605,7 @@ public class BitumenDatenbankActivity extends AppCompatActivity {
                     dataHersteller.open();
                     dataLieferung.open();
 
+Log.d("MainActivity", "onClick: hersteller name:"+ segs[0] );
                     Long id = dataHersteller.getAllHersteller(segs[0]).get(0).getId();
                     Date dTemp = Date.valueOf(date);
 
@@ -681,6 +682,10 @@ Log.d("MainActivity", "onClick: date:"+ dTemp.toString());
             Button buttonAddSort = (Button) rootview.findViewById(R.id.SorteSave);
             final EditText editTextSInfo = (EditText) rootview.findViewById(R.id.sorteBeschreibung);
             final EditText editTextSName = (EditText) rootview.findViewById(R.id.sorteAlgemeineBezeichnung);
+            final EditText editTextSQ1MinGreen = (EditText) rootview.findViewById(R.id.Sorte_q1MinGreenQ);
+            final EditText editTextSQ1MinYellow = (EditText) rootview.findViewById(R.id.Sorte_q1Min);
+            final EditText editTextSQ2MinGreen = (EditText) rootview.findViewById(R.id.Sorte_q2MinGreenQ);
+            final EditText editTextSQ2MinYellow = (EditText) rootview.findViewById(R.id.Sorte_q2Min);
 
 
             buttonAddSort.setOnClickListener(new View.OnClickListener() {
@@ -689,6 +694,11 @@ Log.d("MainActivity", "onClick: date:"+ dTemp.toString());
 
                     String info = editTextSInfo.getText().toString();
                     String name = editTextSName.getText().toString();
+
+                    String q1Green = editTextSQ1MinGreen.getText().toString();
+                    String q1Yellow = editTextSQ1MinYellow.getText().toString();
+                    String q2Green = editTextSQ2MinGreen.getText().toString();
+                    String q2Yellow = editTextSQ2MinYellow.getText().toString();
 
 
                     if(TextUtils.isEmpty(info)) {
@@ -701,8 +711,11 @@ Log.d("MainActivity", "onClick: date:"+ dTemp.toString());
                     }
 
                     dataSource6.open();
+Log.d("MainActivity", "parse int: Q1 and q2:"+ Integer.parseInt(q1Green)+ " "+Integer.parseInt(q1Yellow)+
+        Integer.parseInt(q2Green)+ " "+Integer.parseInt(q2Yellow));
 
-                    dataSource6.createSorte(name, info);
+                    dataSource6.createSorte(name, info, Integer.parseInt(q1Green),Integer.parseInt(q1Yellow),
+                            Integer.parseInt(q2Green),Integer.parseInt(q2Yellow));
                     dataSource6.close();
 
                     InputMethodManager inputMethodManager;
